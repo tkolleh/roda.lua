@@ -1,0 +1,25 @@
+---
+name: Publish to LuaRocks
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Lux
+        uses: lumen-oss/gh-actions-lux@v1
+        with:
+          version: 0.18.8
+
+      - name: Upload to LuaRocks
+        run: lx upload
+        env:
+          LUX_API_KEY: ${{ secrets.LUX_API_KEY }}
