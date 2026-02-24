@@ -1,6 +1,10 @@
 # Lux
 .lux/
 lux-lock.toml
+lux.lock
+
+# Lua Language Server
+.luarc.json
 
 # Lua
 *.luac
