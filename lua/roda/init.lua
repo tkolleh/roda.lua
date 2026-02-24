@@ -61,7 +61,7 @@ function M.new(opts)
   self._text = opts.text or ""
   self._prefix_text = opts.prefixText or ""
   self._suffix_text = opts.suffixText or ""
-  self._color = opts.color ~= nil and opts.color or "cyan"
+  self._color = opts.color == nil and "cyan" or opts.color
   self._spinner = spinner_def
   self._interval = opts.interval or spinner_def.interval or 100
   self._stream = opts.stream or io.stderr
