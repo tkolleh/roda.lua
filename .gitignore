@@ -1,0 +1,25 @@
+# Lux
+.lux/
+lux-lock.toml
+
+# Lua
+*.luac
+lua_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test artifacts
+luacov.stats.out
+luacov.report.out
+
+# Demo recording
+*.cast
