@@ -1,7 +1,7 @@
 --- roda/symbols.lua - Terminal symbols for final states
 --- @module roda.symbols
 --- @author TJ Kolleh
---- @license MIT
+--- @license EUPL-1.2
 
 local M = {}
 
