@@ -4,21 +4,21 @@
 
 [![CI](https://github.com/tkolleh/roda.lua/actions/workflows/tests.yml/badge.svg)](https://github.com/tkolleh/roda.lua/actions/workflows/tests.yml)
 [![LuaRocks](https://img.shields.io/luarocks/v/tkolleh/roda)](https://luarocks.org/modules/tkolleh/roda)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: EUPL 1.2](https://img.shields.io/badge/License-EUPL--1.2-blue.svg)](https://opensource.org/licenses/EUPL-1.2)
 
-**Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library inspired by [sindresorhus/ora](https://github.com/sindresorhus/ora).
+**Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library
 
 ![Demo](./assets/demo.gif)
 
 ## Features
 
 - **16 built-in spinner styles** - dots, line, arc, bounce, and more
-- **Colorized output** - 9 terminal colors supported
-- **Terminal states** - succeed, fail, warn, info with symbols
+- **Colorized output**     - 9 terminal colors supported
+- **Terminal states**      - succeed, fail, warn, info with symbols
 - **Dynamic text updates** - change text while spinning
-- **Highly configurable** - intervals, colors, prefixes, suffixes
+- **Highly configurable**  - intervals, colors, prefixes, suffixes
 - **Minimal dependencies** - only requires `luasystem`
-- **Lua 5.1+ compatible** - works with Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT
+- **Lua 5.1+ compatible**  - works with Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT
 
 ## Installation
 
@@ -303,7 +303,7 @@ spinner:succeed(string.format("Processed %d items", total))
 
 ## Related Projects
 
-- [sindresorhus/ora](https://github.com/sindresorhus/ora) - The original Node.js implementation
+- [sindresorhus/ora](https://github.com/sindresorhus/ora) - An inspirational Node.js implementation
 - [cli-spinners](https://github.com/sindresorhus/cli-spinners) - Spinner frame definitions
 
 ## Contributing
@@ -312,4 +312,4 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines, including how to debug 
 
 ## License
 
-MIT (c) TJ Kolleh
+EUPL-1.2 (c) TJ Kolleh
