@@ -3,7 +3,7 @@
 ---
 --- @module roda
 --- @author TJ Kolleh
---- @license MIT
+--- @license EUPL-1.2
 
 local system = require("system")
 local ansi = require("roda.ansi")

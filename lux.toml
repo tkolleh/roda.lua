@@ -10,7 +10,7 @@ provides elegant visual feedback for CLI applications. Features include
 multiple spinner styles, colorized output, and convenient methods for 
 success/failure/warning states. Inspired by sindresorhus/ora.
 """
-license = "MIT"
+license = "EUPL-1.2"
 homepage = "https://github.com/tkolleh/roda.lua"
 issues_url = "https://github.com/tkolleh/roda.lua/issues"
 maintainer = "TJ Kolleh"

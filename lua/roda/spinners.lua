@@ -2,7 +2,7 @@
 --- Inspired by cli-spinners (https://github.com/sindresorhus/cli-spinners)
 --- @module roda.spinners
 --- @author TJ Kolleh
---- @license MIT
+--- @license EUPL-1.2
 
 local M = {}
 

@@ -1,7 +1,7 @@
 --- roda/ansi.lua - ANSI escape code utilities
 --- @module roda.ansi
 --- @author TJ Kolleh
---- @license MIT
+--- @license EUPL-1.2
 
 local M = {}
 
