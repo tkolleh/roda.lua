@@ -52,10 +52,10 @@ end
 --- Check if the given stream supports ANSI colors
 ---@param stream file*|nil The stream to check (defaults to io.stderr)
 ---@return boolean True if colors are supported
-function M.supports_color(stream)
-	stream = stream or io.stderr
+function M.supports_color(_stream)
 	-- Basic check: assume TTY supports color
 	-- In practice, you'd check isatty() but Lua doesn't have this built-in
+	-- _stream parameter reserved for future TTY detection
 	return true
 end
 
