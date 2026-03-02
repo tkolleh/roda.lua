@@ -94,5 +94,5 @@ for _, style in ipairs(styles) do
 end
 
 print("")
-print("  ✨ Learn more: https://luarocks.org/modules/tkolleh/roda")
+print("  ✨ Learn more: luarocks.org/modules/tkolleh/roda")
 print("")
