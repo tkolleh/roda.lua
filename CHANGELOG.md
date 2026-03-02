@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.1](https://github.com/tkolleh/roda.lua/compare/v1.0.0...v1.0.1) (2026-03-02)
+
+
+### Bug Fixes
+
+* **ci:** add --lua-version flag to lx upload ([51b388a](https://github.com/tkolleh/roda.lua/commit/51b388affeb95c6fcfef04198614fa6d058cde42))
+* **publish:** add tag field to source section ([79261a7](https://github.com/tkolleh/roda.lua/commit/79261a7b304d44e8dbe2c7bb50f705486151fa83))
+* **publish:** restore --lua-version 5.4 flag for lx upload ([0080da5](https://github.com/tkolleh/roda.lua/commit/0080da50530ed06f74eda8923cb1dbb46ed0c4ea))
+* **publish:** revert to template URL and remove --lua-version flag ([a8eb448](https://github.com/tkolleh/roda.lua/commit/a8eb448a57758e4be07a441878e3085f81f429a9))
+* **publish:** upgrade Lux to v0.25.3 and use --lua-version 5.1 ([01e94d1](https://github.com/tkolleh/roda.lua/commit/01e94d14e287e3ff11834d0eb11e40909f728d3a))
+* **publish:** use single-line detailed description ([dfcea81](https://github.com/tkolleh/roda.lua/commit/dfcea81df00b70cd0a109ceb3c1cc61de68676ae))
+
 ## 1.0.0 (2026-03-02)
 
 
