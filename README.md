@@ -8,9 +8,9 @@
 
 **Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library
 
-![Demo](./assets/demo.gif)
-
 ## Features
+
+![Demo](./assets/demo.gif)
 
 - **16 built-in spinner styles** - dots, line, arc, bounce, and more
 - **Colorized output**     - 9 terminal colors supported
