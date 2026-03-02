@@ -9,19 +9,29 @@ package.path = "./lua/?.lua;./lua/?/init.lua;" .. package.path
 local roda = require("roda")
 local system = require("system")
 
+--- Spin for a given duration (in seconds)
+--- This is required because Lua is single-threaded - we must
+--- manually call :spin() in a loop to animate the frames.
+---@param spinner table Spinner instance
+---@param duration number Duration in seconds
+local function spin_for(spinner, duration)
+	local start = system.gettime()
+	while (system.gettime() - start) < duration do
+		spinner:spin()
+		system.sleep(0.05) -- ~20 FPS
+	end
+end
+
 print("")
 print("  🎡 roda.lua - Elegant terminal spinners for Lua")
-print("  ─────────────────────────────────────────────────")
 print("")
-
-system.sleep(1)
 
 -- Demo 1: Basic spinner with success
 local s1 = roda("Installing dependencies..."):start()
-system.sleep(2)
+spin_for(s1, 1.8)
 s1:succeed("Dependencies installed!")
 
-system.sleep(0.8)
+system.sleep(0.5)
 
 -- Demo 2: Different spinner style with failure
 local s2 = roda({
@@ -29,10 +39,10 @@ local s2 = roda({
 	spinner = "dots2",
 	color = "yellow",
 }):start()
-system.sleep(1.8)
+spin_for(s2, 1.8)
 s2:fail("Connection refused!")
 
-system.sleep(0.8)
+system.sleep(0.5)
 
 -- Demo 3: Warning state
 local s3 = roda({
@@ -40,17 +50,17 @@ local s3 = roda({
 	spinner = "arc",
 	color = "cyan",
 }):start()
-system.sleep(1.5)
+spin_for(s3, 1.5)
 s3:warn("Using deprecated options")
 
-system.sleep(0.8)
+system.sleep(0.5)
 
 -- Demo 4: Info state
 local s4 = roda("Checking cache..."):start()
-system.sleep(1.2)
+spin_for(s4, 1.2)
 s4:info("Using cached response")
 
-system.sleep(0.8)
+system.sleep(0.5)
 
 -- Demo 5: Dynamic text updates with progress
 local s5 = roda({
@@ -61,11 +71,11 @@ local s5 = roda({
 
 for i = 1, 5 do
 	s5:setText(string.format("Processing file %d of 5...", i))
-	system.sleep(0.7)
+	spin_for(s5, 0.5)
 end
 s5:succeed("All 5 files processed!")
 
-system.sleep(0.8)
+system.sleep(0.5)
 
 -- Demo 6: Multiple spinner styles showcase
 print("")
@@ -79,7 +89,7 @@ for _, style in ipairs(styles) do
 		spinner = style,
 		color = "green",
 	}):start()
-	system.sleep(1.5)
+	spin_for(s, 1.2)
 	s:stop()
 end
 
