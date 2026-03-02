@@ -16,8 +16,6 @@ jobs:
 
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
-        with:
-          version: 0.18.8
 
       - name: Upload to LuaRocks
         run: lx upload

@@ -27,8 +27,6 @@ jobs:
 
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
-        with:
-          version: 0.18.8
 
       - name: Run tests
         run: |
@@ -43,11 +41,11 @@ jobs:
 
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
-        with:
-          version: 0.18.8
 
       - name: Check formatting
-        run: lx fmt --check
+        run: |
+          lx fmt
+          git diff --exit-code || (echo "::error::Code is not formatted. Run 'lx fmt' locally and commit the changes." && exit 1)
 
       - name: Run linter
         run: lx lint
