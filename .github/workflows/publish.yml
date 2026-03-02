@@ -20,6 +20,6 @@ jobs:
           version: 0.18.8
 
       - name: Upload to LuaRocks
-        run: lx --lua-version 5.4 upload
+        run: lx upload
         env:
           LUX_API_KEY: ${{ secrets.LUX_API_KEY }}
