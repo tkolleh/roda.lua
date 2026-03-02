@@ -26,6 +26,7 @@ luasystem = ">=0.4.0"
 [test_dependencies]
 busted = ">=2.0"
 nlua = ">=0.3"
+luafilesystem = ">=1.8"
 
 [test]
 type = "busted"
