@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/tkolleh/roda.lua/compare/v1.0.3...v1.0.4) (2026-03-02)
+
+
+### Bug Fixes
+
+* **demo:** add spin_for() to animate spinners ([2cc6fef](https://github.com/tkolleh/roda.lua/commit/2cc6fefd9ef4bb15de0a54827750ceb6a4e7c4dc))
+
 ## [1.0.3](https://github.com/tkolleh/roda.lua/compare/v1.0.2...v1.0.3) (2026-03-02)
 
 
