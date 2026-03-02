@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/tkolleh/roda.lua/compare/v1.0.1...v1.0.2) (2026-03-02)
+
+
+### Bug Fixes
+
+* **publish:** upgrade Lux to v0.25.3 and use --lua-version 5.1 ([01e94d1](https://github.com/tkolleh/roda.lua/commit/01e94d14e287e3ff11834d0eb11e40909f728d3a))
+* **publish:** use single-line detailed description ([dfcea81](https://github.com/tkolleh/roda.lua/commit/dfcea81df00b70cd0a109ceb3c1cc61de68676ae))
+
 ## [1.0.1](https://github.com/tkolleh/roda.lua/compare/v1.0.0...v1.0.1) (2026-03-02)
 
 
