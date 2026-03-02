@@ -1,5 +1,5 @@
 package = "roda"
-version = "1.0.1"
+version = "1.0.2"
 lua = ">=5.1"
 
 [description]
