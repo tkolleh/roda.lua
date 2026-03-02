@@ -22,11 +22,11 @@ dev = "git+https://github.com/tkolleh/roda.lua.git"
 
 [dependencies]
 luasystem = ">=0.4.0"
+luafilesystem = ">=1.8"  # Required for busted's penlight dependency (lumen-oss/lux#722)
 
 [test_dependencies]
 busted = ">=2.0"
 nlua = ">=0.3"
-luafilesystem = ">=1.8"
 
 [test]
 type = "busted"
