@@ -15,10 +15,10 @@
 Output assets/demo.gif
 Set Shell "zsh"
 Set FontFamily "JetBrains Mono"
-Set FontSize 16
-Set Width 900
-Set Height 500
-Set Padding 20
+Set FontSize 11
+Set Width 600
+Set Height 350
+Set Padding 10
 Set Theme "Dracula"
 Set TypingSpeed 50ms
 Set PlaybackSpeed 1
