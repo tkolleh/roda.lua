@@ -14,12 +14,12 @@
 # Output configuration
 Output assets/demo.gif
 Set Shell "zsh"
-Set FontFamily "JetBrains Mono"
-Set FontSize 11
-Set Width 600
-Set Height 350
-Set Padding 10
-Set Theme "Dracula"
+
+# Set up a 1200x600 terminal
+Set FontSize 30
+Set Width 1200
+Set Height 600
+
 Set TypingSpeed 50ms
 Set PlaybackSpeed 1
 
@@ -33,7 +33,7 @@ Enter
 
 # Wait for demo to complete (adjust based on demo.lua timing)
 # Total demo time: ~18 seconds
-Sleep 20s
+Sleep 21s
 
 # Brief pause at end
 Sleep 1s
