@@ -4,7 +4,7 @@ name: Publish to LuaRocks
 on:
   push:
     tags:
-      - "*"
+      - "v*.*.*"  # Only trigger on semver tags (e.g., v1.0.0)
   workflow_dispatch:
 
 jobs:
@@ -14,10 +14,49 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Validate tag format
+        if: github.event_name == 'push'
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$ ]]; then
+            echo "::error::Invalid tag format: $TAG. Expected semver format (e.g., v1.0.0 or v1.0.0-rc.1)"
+            exit 1
+          fi
+          echo "✓ Tag format valid: $TAG"
+
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
+          # Using v0.25.3 for publish (not v0.18.8 used in tests)
+          # Reason: v0.18.8 has bugs with lx upload causing 400 errors
+          # The publish workflow doesn't run tests, so no busted/penlight issues
           version: 0.25.3
+
+      - name: Install LuaRocks (for validation)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq luarocks
+
+      - name: Generate and validate rockspec
+        run: |
+          echo "Generating rockspec..."
+          lx generate-rockspec
+          
+          ROCKSPEC=$(ls -1 *.rockspec 2>/dev/null | head -1)
+          if [[ -z "$ROCKSPEC" ]]; then
+            echo "::error::No rockspec file generated"
+            exit 1
+          fi
+          
+          echo "Validating rockspec: $ROCKSPEC"
+          if ! luarocks lint "$ROCKSPEC"; then
+            echo "::error::Rockspec validation failed. Check for malformed strings or syntax errors."
+            echo "::error::Common cause: multiline TOML strings in lux.toml generate invalid Lua syntax."
+            exit 1
+          fi
+          
+          echo "✓ Rockspec valid: $ROCKSPEC"
+          rm -f "$ROCKSPEC"  # Clean up, lx upload will regenerate
 
       - name: Upload to LuaRocks
         run: lx --lua-version 5.1 upload

@@ -17,6 +17,10 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
+          # Pinned to v0.18.8 due to busted/penlight transitive dependency issues
+          # in newer versions (see lumen-oss/lux#722)
+          # The publish workflow uses v0.25.3 which doesn't have this issue
+          # because it doesn't run tests (no busted dependency)
           version: 0.18.8
 
       - name: Run tests
@@ -33,6 +37,7 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
+          # See comment in test job above for version pinning rationale
           version: 0.18.8
 
       - name: Check formatting

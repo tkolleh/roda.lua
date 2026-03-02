@@ -88,6 +88,32 @@ lx --lua-version 5.4 test
 
 ## Code Style
 
+### lux.toml Guidelines
+
+When editing `lux.toml`, be aware of this **known Lux bug**:
+
+> **⚠️ Avoid multiline TOML strings** (triple-quoted `"""` strings) in `lux.toml`.
+> Lux generates invalid Lua rockspec syntax from multiline TOML strings,
+> causing `lx upload` to fail with a 400 Bad Request error.
+
+**Bad** (causes upload failure):
+```toml
+[description]
+detailed = """
+This is a multiline
+description that will break.
+"""
+```
+
+**Good** (use single-line strings):
+```toml
+[description]
+detailed = "This is a single-line description that works correctly."
+```
+
+This issue is tracked in the Lux project. Until fixed, always use single-line strings
+for all `lux.toml` fields.
+
 ### Formatting
 
 We use `lx fmt` for consistent code formatting:
