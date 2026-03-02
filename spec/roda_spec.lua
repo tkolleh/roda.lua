@@ -337,9 +337,6 @@ describe("roda.promise", function()
 			flush = function() end,
 		}
 
-		-- Override default stream
-		local original_stderr = io.stderr
-
 		local result = roda.promise({
 			text = "Working...",
 			stream = stream,

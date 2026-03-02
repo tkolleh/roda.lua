@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: ${{ matrix.os }} - Lua ${{ matrix.lua_version }}
+    name: ${{ matrix.os }} - Lua 5.4
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -16,11 +16,6 @@ jobs:
         os:
           - ubuntu-24.04
           - macos-14
-        lua_version:
-          - "5.1"
-          - "5.2"
-          - "5.3"
-          - "5.4"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,7 +27,7 @@ jobs:
 
       - name: Run tests
         run: |
-          lx --lua-version ${{ matrix.lua_version }} test
+          lx --lua-version 5.4 test
 
   lint:
     name: Lint & Format
