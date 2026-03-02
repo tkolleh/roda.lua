@@ -17,7 +17,8 @@ maintainer = "TJ Kolleh"
 labels = ["terminal", "spinner", "cli", "ansi", "progress", "neovim"]
 
 [source]
-url = "https://github.com/tkolleh/roda.lua/archive/refs/tags/v$(VERSION).zip"
+url = "https://github.com/tkolleh/roda.lua"
+tag = "v1.0.1"
 dev = "git+https://github.com/tkolleh/roda.lua.git"
 
 [dependencies]
