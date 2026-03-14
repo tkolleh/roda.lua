@@ -120,7 +120,7 @@ function Spinner:execute(command, args)
 		local output = {}
 
 		-- read the stdout stream (async)
-		uv.read_start(rslt.stdout, function(err, data)
+		uv.read_start(rslt.stdout, function(_, data)
 			if data then
 				table.insert(output, data)
 			end
