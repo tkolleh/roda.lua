@@ -1,0 +1,11 @@
+pre-commit:
+  commands:
+    format:
+      glob: "*.lua"
+      run: lx fmt {staged_files}
+      stage_fixed: true
+
+pre-push:
+  commands:
+    test:
+      run: lx test
