@@ -11,6 +11,8 @@ local ansi = require("roda.ansi")
 local spinners = require("roda.spinners")
 local symbols = require("roda.symbols")
 
+--- Bracket for safely acquiring and releasing a libuv timer
+--- @type function
 local with_safe_timer = fp.bracket(function()
 	return uv.new_timer()
 end, function(timer)
@@ -20,6 +22,10 @@ end, function(timer)
 	end
 end)
 
+--- Bracket for safely acquiring and releasing child process pipes and handles
+--- @param command string The command to execute
+--- @param args table|nil Arguments for the command
+--- @return function A bracket function for the process
 local make_process_bracket = function(command, args)
 	return fp.bracket(function() -- acquire command pipes and handles
 		return {
@@ -454,6 +460,8 @@ setmetatable(M, {
 	end,
 })
 
+--- Run the libuv event loop. Blocks until all async tasks finish.
+--- @return nil
 function M.run()
 	uv.run("default")
 end
