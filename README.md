@@ -8,9 +8,9 @@
 
 **Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library
 
-![Demo](./assets/demo.gif)
-
 ## Features
+
+![Demo](./assets/demo.gif)
 
 - **16 built-in spinner styles** - dots, line, arc, bounce, and more
 - **Colorized output**     - 9 terminal colors supported
@@ -182,24 +182,25 @@ spinner:stopAndPersist({
 
 ### Available Spinners
 
-| Name | Preview | Interval |
-|------|---------|----------|
-| `dots` | ......... | 80ms |
-| `dots2` | ........ | 80ms |
-| `dots3` | .......... | 80ms |
-| `line` | -\\|/ | 130ms |
-| `line2` | .--.-- | 100ms |
-| `pipe` | ........ | 100ms |
-| `simpleDots` | . .. ... | 400ms |
-| `star` | ...... | 70ms |
-| `arc` | ...... | 100ms |
-| `circle` | ... | 120ms |
-| `bounce` | .... | 120ms |
-| `bouncingBar` | [=   ] | 80ms |
-| `arrow` | ........ | 100ms |
-| `growVertical` | ....... | 120ms |
-| `growHorizontal` | ....... | 120ms |
-| `aesthetic` | .... | 80ms |
+| Name             | Interval   |
+| ------           | ---------- |
+| `dots`           | 80ms       |
+| `dots2`          | 80ms       |
+| `dots3`          | 80ms       |
+| `line`           | 130ms      |
+| `line2`          | 100ms      |
+| `pipe`           | 100ms      |
+| `simpleDots`     | 400ms      |
+| `star`           | 70ms       |
+| `arc`            | 100ms      |
+| `circle`         | 120ms      |
+| `bounce`         | 120ms      |
+| `bouncingBar`    | 80ms       |
+| `arrow`          | 100ms      |
+| `growVertical`   | 120ms      |
+| `growHorizontal` | 120ms      |
+| `aesthetic`      | 80ms       |
+
 
 ### Available Colors
 
