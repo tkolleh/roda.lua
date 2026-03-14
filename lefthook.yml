@@ -4,6 +4,9 @@ pre-commit:
       glob: "*.lua"
       run: lx fmt {staged_files}
       stage_fixed: true
+    lint:
+      glob: "*.lua"
+      run: lx lint {staged_files}
 
 pre-push:
   commands:
