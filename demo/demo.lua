@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env -S lx lua
 --- Demo script for Roda terminal spinner library
 --- Run this script to see all features in action
 

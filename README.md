@@ -6,7 +6,7 @@
 [![LuaRocks](https://img.shields.io/luarocks/v/tkolleh/roda)](https://luarocks.org/modules/tkolleh/roda)
 [![License: EUPL 1.2](https://img.shields.io/badge/License-EUPL--1.2-blue.svg)](https://opensource.org/licenses/EUPL-1.2)
 
-**Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library
+**Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library.
 
 ## Features
 
@@ -17,8 +17,9 @@
 - **Terminal states**      - succeed, fail, warn, info with symbols
 - **Dynamic text updates** - change text while spinning
 - **Highly configurable**  - intervals, colors, prefixes, suffixes
-- **Minimal dependencies** - only requires `luasystem`
+- **Minimal dependencies** - only requires `luasystem` and `luv`
 - **Lua 5.1+ compatible**  - works with Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT
+- **Asynchronous**         - non-blocking execution using `luv`
 
 ## Installation
 
@@ -32,14 +33,6 @@ lx add roda
 
 ```bash
 luarocks install roda
-```
-
-### Manual Installation
-
-Clone the repository and add to your `package.path`:
-
-```lua
-package.path = "/path/to/roda.lua/lua/?.lua;/path/to/roda.lua/lua/?/init.lua;" .. package.path
 ```
 
 ## Quick Start
@@ -61,6 +54,26 @@ local spinner = roda({
 spinner:start()
 -- do work
 spinner:succeed()
+```
+
+## Async Command Execution
+
+Roda supports running child processes asynchronously without blocking the Lua runtime.
+
+```lua
+local roda = require("roda")
+
+local spinner = roda("Installing dependencies...")
+
+-- Execute a command asynchronously
+spinner:execute("npm", {"install"})(function(exit_code, output)
+  if exit_code == 0 then
+    print("\nOutput:\n" .. output)
+  end
+end)
+
+-- Run the event loop to wait for async tasks
+roda.run()
 ```
 
 ## API Reference
@@ -87,229 +100,22 @@ Create a new spinner instance.
 
 ### Instance Methods
 
-#### `:start(text?)`
+- `:start(text?)` - Start the spinner. Optionally set new text.
+- `:stop()` - Stop and clear the spinner from the terminal.
+- `:succeed(text?)` - Stop with green checkmark.
+- `:fail(text?)` - Stop with red X.
+- `:warn(text?)` - Stop with yellow warning.
+- `:info(text?)` - Stop with blue info.
+- `:spin()` - Render next frame. Call this in a loop for manual animation control.
+- `:setText(text)` - Update spinner text while spinning.
+- `:setColor(color)` - Change spinner color.
+- `:isSpinning()` - Check if spinner is currently active.
+- `:stopAndPersist(opts)` - Stop with custom symbol and text.
+- `:execute(command, args)` - Execute a child process asynchronously while spinning. Returns a Thunk that expects an `on_complete` callback.
 
-Start the spinner. Optionally set new text.
+### Module Methods
 
-```lua
-spinner:start()
-spinner:start("New loading text")
-```
-
-#### `:stop()`
-
-Stop and clear the spinner from the terminal.
-
-#### `:succeed(text?)`
-
-Stop with green checkmark.
-
-```lua
-spinner:succeed("Completed!")
-```
-
-#### `:fail(text?)`
-
-Stop with red X.
-
-```lua
-spinner:fail("Failed to connect")
-```
-
-#### `:warn(text?)`
-
-Stop with yellow warning.
-
-```lua
-spinner:warn("Deprecated API used")
-```
-
-#### `:info(text?)`
-
-Stop with blue info.
-
-```lua
-spinner:info("Using cached data")
-```
-
-#### `:spin()`
-
-Render next frame. Call this in a loop for manual animation control.
-
-```lua
-while working do
-  spinner:spin()
-  system.sleep(0.08)
-end
-```
-
-#### `:setText(text)`
-
-Update spinner text while spinning.
-
-```lua
-spinner:setText("Processing item 5/10")
-```
-
-#### `:setColor(color)`
-
-Change spinner color.
-
-```lua
-spinner:setColor("yellow")
-```
-
-#### `:isSpinning()`
-
-Check if spinner is currently active.
-
-```lua
-if spinner:isSpinning() then
-  -- still working
-end
-```
-
-#### `:stopAndPersist(opts)`
-
-Stop with custom symbol and text.
-
-```lua
-spinner:stopAndPersist({
-  symbol = "->",
-  text = "Skipped",
-})
-```
-
-### Available Spinners
-
-| Name             | Interval   |
-| ------           | ---------- |
-| `dots`           | 80ms       |
-| `dots2`          | 80ms       |
-| `dots3`          | 80ms       |
-| `line`           | 130ms      |
-| `line2`          | 100ms      |
-| `pipe`           | 100ms      |
-| `simpleDots`     | 400ms      |
-| `star`           | 70ms       |
-| `arc`            | 100ms      |
-| `circle`         | 120ms      |
-| `bounce`         | 120ms      |
-| `bouncingBar`    | 80ms       |
-| `arrow`          | 100ms      |
-| `growVertical`   | 120ms      |
-| `growHorizontal` | 120ms      |
-| `aesthetic`      | 80ms       |
-
-
-### Available Colors
-
-`black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, `gray`
-
-Set to `false` to disable coloring.
-
-## Advanced Usage
-
-### Async Command Execution
-
-```lua
-local roda = require("roda")
-local system = require("system")
-
-local function exec_with_spinner(cmd, text)
-  local spinner = roda(text):start()
-  
-  local tmpfile = os.tmpname()
-  local exitfile = os.tmpname()
-  os.execute(string.format("(%s) > %s 2>&1; echo $? > %s &", cmd, tmpfile, exitfile))
-  
-  local exit_code = nil
-  while exit_code == nil do
-    spinner:spin()
-    local ef = io.open(exitfile, "r")
-    if ef then
-      local content = ef:read("*a")
-      ef:close()
-      if content:match("%d+") then
-        exit_code = tonumber(content:match("%d+"))
-      end
-    end
-    system.sleep(0.08)
-  end
-  
-  local f = io.open(tmpfile, "r")
-  local output = f and f:read("*a") or ""
-  if f then f:close() end
-  os.remove(tmpfile)
-  os.remove(exitfile)
-  
-  if exit_code == 0 then
-    spinner:succeed(text)
-  else
-    spinner:fail(text)
-  end
-  
-  return output, exit_code == 0
-end
-
--- Usage
-local output, success = exec_with_spinner("npm install", "Installing dependencies")
-```
-
-### Custom Spinners
-
-```lua
-local spinner = roda({
-  text = "Moon phases",
-  spinner = {
-    interval = 100,
-    frames = { "moon1", "moon2", "moon3", "moon4", "moon5", "moon6", "moon7", "moon8" },
-  },
-})
-spinner:start()
-```
-
-### Promise-style Wrapping
-
-```lua
-local result = roda.promise({
-  text = "Fetching data...",
-  successText = "Data fetched!",
-  failText = "Failed to fetch data",
-  fn = function()
-    -- your work here
-    return fetch_data()
-  end,
-})
-```
-
-### Progress Updates
-
-```lua
-local spinner = roda("Processing..."):start()
-for i = 1, total do
-  spinner:setText(string.format("Processing [%d/%d]", i, total))
-  spinner:spin()
-  process_item(i)
-  system.sleep(0.02)
-end
-spinner:succeed(string.format("Processed %d items", total))
-```
-
-## Compatibility
-
-- Lua 5.1, 5.2, 5.3, 5.4
-- LuaJIT 2.0, 2.1
-- Requires a terminal that supports ANSI escape codes
-
-## Related Projects
-
-- [sindresorhus/ora](https://github.com/sindresorhus/ora) - An inspirational Node.js implementation
-- [cli-spinners](https://github.com/sindresorhus/cli-spinners) - Spinner frame definitions
-
-## Contributing
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines, including how to debug with Neovim DAP.
+- `roda.run()` - Run the libuv event loop. Blocks until all async tasks finish.
 
 ## License
 

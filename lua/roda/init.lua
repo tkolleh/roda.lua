@@ -1,14 +1,52 @@
 --- roda.lua - Elegant terminal spinner for Lua
---- Roda (Portuguese for "wheel") - inspired by sindresorhus/ora
+--- Roda (Portuguese for "wheel")
 ---
 --- @module roda
 --- @author TJ Kolleh
 --- @license EUPL-1.2
 
-local system = require("system")
+local uv = require("luv")
+local fp = require("roda.util")
 local ansi = require("roda.ansi")
 local spinners = require("roda.spinners")
 local symbols = require("roda.symbols")
+
+--- Bracket for safely acquiring and releasing a libuv timer
+--- @type function
+local with_safe_timer = fp.bracket(function()
+	return uv.new_timer()
+end, function(timer)
+	if timer and not timer:is_closing() then
+		timer:stop()
+		timer:close()
+	end
+end)
+
+--- Bracket for safely acquiring and releasing child process pipes and handles
+--- @param command string The command to execute
+--- @param args table|nil Arguments for the command
+--- @return function A bracket function for the process
+local make_process_bracket = function(command, args)
+	return fp.bracket(function() -- acquire command pipes and handles
+		return {
+			stdout = uv.new_pipe(false),
+			stderr = uv.new_pipe(false),
+			command = command,
+			args = args or {},
+			handle = nil,
+		}
+	end, function(rslt) -- release pipes and handles
+		if rslt.stdout and not rslt.stdout:is_closing() then
+			rslt.stdout:close()
+		end
+		if rslt.stderr and not rslt.stderr:is_closing() then
+			rslt.stderr:close()
+		end
+		if rslt.handle and not rslt.handle:is_closing() then
+			rslt.handle:close()
+		end
+	end)
+end
 
 local M = {}
 
@@ -36,7 +74,6 @@ M.default_spinner = spinners.default
 ---@field private _indent number
 ---@field private _is_spinning boolean
 ---@field private _frame_index number
----@field private _last_frame_time number
 local Spinner = {}
 Spinner.__index = Spinner
 
@@ -69,9 +106,52 @@ function M.new(opts)
 	self._indent = opts.indent or 0
 	self._is_spinning = false
 	self._frame_index = 1
-	self._last_frame_time = 0
 
 	return self
+end
+
+--- Execute process asynchronously while spinning
+---@param command string
+---@param args table|nil
+---@return function Thunk that expects an on_complete callback
+function Spinner:execute(command, args)
+	local with_cmd = make_process_bracket(command, args)
+	local run_cmd = function(rslt, done_process)
+		local output = {}
+
+		-- read the stdout stream (async)
+		uv.read_start(rslt.stdout, function(_, data)
+			if data then
+				table.insert(output, data)
+			end
+		end)
+
+		-- evaluate the non-blocking process
+		rslt.handle = uv.spawn(rslt.command, {
+			args = rslt.args,
+			stdio = { nil, rslt.stdout, rslt.stderr },
+		}, function(exit_code)
+			if exit_code == 0 then
+				self:succeed()
+			else
+				self:fail()
+			end
+			done_process(exit_code, table.concat(output))
+		end)
+	end
+
+	return function(on_complete)
+		with_safe_timer(
+			-- Use the timer with process
+			function(timer, done_timer)
+				self:start()
+				timer:start(0, self._interval, function()
+					self:render()
+				end)
+				with_cmd(run_cmd)(done_timer)
+			end
+		)(on_complete)
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -177,15 +257,9 @@ function Spinner:render()
 		return self
 	end
 
-	local now = system.gettime()
-	local elapsed_ms = (now - self._last_frame_time) * 1000
-
-	if elapsed_ms >= self._interval then
-		self._frame_index = self._frame_index + 1
-		if self._frame_index > #self._spinner.frames then
-			self._frame_index = 1
-		end
-		self._last_frame_time = now
+	self._frame_index = self._frame_index + 1
+	if self._frame_index > #self._spinner.frames then
+		self._frame_index = 1
 	end
 
 	local indent = string.rep(" ", self._indent)
@@ -230,7 +304,6 @@ function Spinner:start(text)
 
 	self._is_spinning = true
 	self._frame_index = 1
-	self._last_frame_time = system.gettime()
 
 	if self._hide_cursor then
 		self._stream:write(ansi.hide_cursor)
@@ -386,5 +459,11 @@ setmetatable(M, {
 		return M.new(opts)
 	end,
 })
+
+--- Run the libuv event loop. Blocks until all async tasks finish.
+--- @return nil
+function M.run()
+	uv.run("default")
+end
 
 return M
