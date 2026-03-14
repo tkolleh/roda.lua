@@ -1,4 +1,4 @@
---- roda/ansi.lua - ANSI escape code utilities
+--- roda/ansi.lua - ANSI escape code
 --- @module roda.ansi
 --- @author TJ Kolleh
 --- @license EUPL-1.2
