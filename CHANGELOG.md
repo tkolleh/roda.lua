@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/tkolleh/roda.lua/compare/v1.0.4...v1.1.0) (2026-03-14)
+
+
+### Features
+
+* Spinner should keep spinning while process is running ([#6](https://github.com/tkolleh/roda.lua/issues/6)) ([365c955](https://github.com/tkolleh/roda.lua/commit/365c9559709a1ba2fa67b92f4778cf2eee7473f8))
+
 ## [1.0.4](https://github.com/tkolleh/roda.lua/compare/v1.0.3...v1.0.4) (2026-03-02)
 
 
