@@ -47,7 +47,7 @@ spinner:succeed("Done!")
 
 -- With options
 local spinner = roda({
-  text = "Processing...",
+  text = "Loading...",
   spinner = "dots2",
   color = "yellow",
 })
@@ -78,7 +78,7 @@ roda.run()
 
 ## API Reference
 
-### `roda(opts)` / `roda.new(opts)`
+### `roda(opts)`
 
 Create a new spinner instance.
 
@@ -115,7 +115,7 @@ Create a new spinner instance.
 
 ### Module Methods
 
-- `roda.run()` - Run the libuv event loop. Blocks until all async tasks finish.
+- `roda.run()` - Run the libuv event loop, and wait until all async tasks finish.
 
 ## License
 
