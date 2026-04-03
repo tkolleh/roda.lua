@@ -11,7 +11,7 @@ local M = {}
 M.hide_cursor = "\27[?25l"
 M.show_cursor = "\27[?25h"
 M.clear_line = "\27[2K"
-M.move_to_col_1 = "\27[G"
+M.move_to_col_1 = "\r\27[1G"
 M.move_up = "\27[A"
 
 -------------------------------------------------------------------------------
@@ -52,10 +52,14 @@ end
 --- Check if the given stream supports ANSI colors
 ---@param stream file*|nil The stream to check (defaults to io.stderr)
 ---@return boolean True if colors are supported
-function M.supports_color(_stream)
-	-- Basic check: assume TTY supports color
-	-- In practice, you'd check isatty() but Lua doesn't have this built-in
-	-- _stream parameter reserved for future TTY detection
+function M.supports_color(stream)
+	local uv_ok, uv = pcall(require, "luv")
+	if uv_ok then
+		local fd = 2 -- stderr
+		if stream == io.stdout then fd = 1 end
+		if stream == io.stdin then fd = 0 end
+		return uv.guess_handle(fd) == "tty"
+	end
 	return true
 end
 
