@@ -18,6 +18,7 @@ dev = "git+https://github.com/tkolleh/roda.lua.git"
 [dependencies]
 luasystem = ">=0.4.0"
 luv = ">= 1.44.2"
+argparse = ">=0.7.1" # New CLI parser
 
 [test_dependencies]
 busted = ">=2.0"
@@ -26,8 +27,15 @@ nlua = ">=0.3"
 [test]
 type = "busted"
 
+[build_dependencies]
+luastatic = ">=0.0.12" # Standalone compiler
+
 [build]
-type = "builtin"
+type = "command"
+build_command = "just build" # Delegate to Justfile
+
+[build.install.bin]
+"roda" = "roda"
 
 [build.install.lua]
 "roda" = "lua/roda/init.lua"
