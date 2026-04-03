@@ -30,6 +30,7 @@ luacov.report.out
 
 # Build artifacts
 .build/
+/roda
 bin_spin.luastatic.c
 spin.luastatic.c
 lua/spin.luastatic.c
