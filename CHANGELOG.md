@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.0.0 (2026-04-03)
+
+
+### Features
+
+* **ansi:** add ANSI escape code utilities module ([b734c8f](https://github.com/tkolleh/roda.lua/commit/b734c8f893c7a1cdb1172c6ead438374154b01d6))
+* **core:** add main roda module with Spinner class ([98d8f63](https://github.com/tkolleh/roda.lua/commit/98d8f63666fff5243e07da90a0389b83b70a1601))
+* Spinner should keep spinning while process is running ([#6](https://github.com/tkolleh/roda.lua/issues/6)) ([3b27a5f](https://github.com/tkolleh/roda.lua/commit/3b27a5f0e5130dfdbb403b391579cc16b7691f37))
+* **spinners:** add 16 spinner frame definitions ([5a37dbc](https://github.com/tkolleh/roda.lua/commit/5a37dbca84e34ebae5a95e1b755ea9440fc03750))
+* **symbols:** add terminal state symbols module ([e996065](https://github.com/tkolleh/roda.lua/commit/e996065cc1abc7699b74306b973e9e2971bf93ca))
+
+
+### Bug Fixes
+
+* **ci:** add --lua-version flag to lx upload ([4dbff9c](https://github.com/tkolleh/roda.lua/commit/4dbff9ca9059d6efba0e93f5f19595ea6a097de7))
+* **ci:** format code and add luafilesystem test dependency ([81d8c1d](https://github.com/tkolleh/roda.lua/commit/81d8c1d6be1eb84e5b63c01e4a120146ff07a803))
+* **ci:** pin Lux to v0.18.8 per official docs recommendation ([300fc77](https://github.com/tkolleh/roda.lua/commit/300fc77056b43aa3bc5dea7e42200d3abc26eeae))
+* **ci:** simplify test matrix to Lua 5.4 and fix lint warnings ([988553f](https://github.com/tkolleh/roda.lua/commit/988553f8f3aaaadc9df7392ce744ca4e3797a7a2))
+* **ci:** update Lux action to latest and fix fmt check ([93591f0](https://github.com/tkolleh/roda.lua/commit/93591f04a08399f07c1e12278d86ded4e1beee40))
+* **ci:** use ubuntu-only for tests due to macOS Lux path bug ([a74c650](https://github.com/tkolleh/roda.lua/commit/a74c650e9d29443babe2429061466efce232d0e3))
+* **core:** preserve false value for color option ([5aee276](https://github.com/tkolleh/roda.lua/commit/5aee276f767194a33147acd2b83b26b9697706bf))
+* **demo:** add spin_for() to animate spinners ([e092b4e](https://github.com/tkolleh/roda.lua/commit/e092b4ec7f7b585b9b0b05a943faafdec0afa2e1))
+* **deps:** move luafilesystem to runtime dependencies ([f9920ce](https://github.com/tkolleh/roda.lua/commit/f9920ce0fcb9c3f33cb775ebd7f41938e66e6e9e))
+* **publish:** add tag field to source section ([8514e30](https://github.com/tkolleh/roda.lua/commit/8514e30b22048bea1d42670f49cefc76b4979630))
+* **publish:** restore --lua-version 5.4 flag for lx upload ([31d2b72](https://github.com/tkolleh/roda.lua/commit/31d2b72cd37eb768e140b43c9bf72568ba2489d8))
+* **publish:** revert to template URL and remove --lua-version flag ([6f78d90](https://github.com/tkolleh/roda.lua/commit/6f78d9047a50183b1caf75746dd46e9e0c79bc32))
+* **publish:** upgrade Lux to v0.25.3 and use --lua-version 5.1 ([f4e9bdf](https://github.com/tkolleh/roda.lua/commit/f4e9bdf6113084bfcef665316ce9723c4c155e84))
+* **publish:** use single-line detailed description ([4b4bbfa](https://github.com/tkolleh/roda.lua/commit/4b4bbfae42bcf7f5f838342b7107c02a3e94ca7f))
+
 ## [1.1.0](https://github.com/tkolleh/roda.lua/compare/v1.0.4...v1.1.0) (2026-03-14)
 
 
