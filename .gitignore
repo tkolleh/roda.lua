@@ -27,3 +27,10 @@ luacov.report.out
 
 # Demo recording
 *.cast
+
+# Build artifacts
+.build/
+bin_spin.luastatic.c
+spin.luastatic.c
+lua/spin.luastatic.c
+*.luastatic.c
