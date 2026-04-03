@@ -118,25 +118,71 @@ function Spinner:execute(command, args)
 	local with_cmd = make_process_bracket(command, args)
 	local run_cmd = function(rslt, done_process)
 		local output = {}
+		local process_exited = false
+		local stdout_eof = false
+		local stderr_eof = false
+		local exit_code_saved = 0
 
-		-- read the stdout stream (async)
-		uv.read_start(rslt.stdout, function(_, data)
-			if data then
-				table.insert(output, data)
+						local function check_done()
+			if process_exited and stdout_eof and stderr_eof then
+				if exit_code_saved == 0 then
+					self:succeed()
+				else
+					self:fail()
+				end
+				done_process(exit_code_saved, table.concat(output))
 			end
-		end)
+		end
+
+
 
 		-- evaluate the non-blocking process
-		rslt.handle = uv.spawn(rslt.command, {
+		local handle, spawn_err = uv.spawn(rslt.command, {
 			args = rslt.args,
 			stdio = { nil, rslt.stdout, rslt.stderr },
 		}, function(exit_code)
-			if exit_code == 0 then
-				self:succeed()
-			else
-				self:fail()
+			process_exited = true
+			exit_code_saved = exit_code
+			if handle and not handle:is_closing() then
+				uv.close(handle)
 			end
-			done_process(exit_code, table.concat(output))
+			check_done()
+		end)
+
+		if not handle then
+			-- Immediate failure path
+			stdout_eof = true
+			stderr_eof = true
+			process_exited = true
+			exit_code_saved = 127  -- Command not found
+			-- Print spawn error to stderr
+			if spawn_err then
+				self._stream:write("error: " .. tostring(spawn_err) .. "\n")
+				self._stream:flush()
+			end
+			check_done()
+			return
+		end
+		rslt.handle = handle
+
+		-- read the stdout stream (async)
+		uv.read_start(rslt.stdout, function(err, data)
+			if data then
+				table.insert(output, data)
+			else
+				stdout_eof = true
+				check_done()
+			end
+		end)
+
+		-- read the stderr stream (async)
+		uv.read_start(rslt.stderr, function(err, data)
+			if data then
+				table.insert(output, data)
+			else
+				stderr_eof = true
+				check_done()
+			end
 		end)
 	end
 
