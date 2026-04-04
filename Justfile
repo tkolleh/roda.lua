@@ -34,8 +34,10 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 # --- Variables ---
 
 lua_prefix := env('LUA_PREFIX', '') || `brew --prefix lua`
-lua_include := lua_prefix + "/include/lua"
+lua_include := lua55_dir + "/include/lua5.5"
 lua_lib := lua_prefix + "/lib/liblua.a"
+lua55_dir := "/opt/homebrew/opt/lua"
+macos_version := `sw_vers -productVersion | cut -d. -f1-2`
 build_dir := env('BUILD_DIR', '') || '.build'
 package_name := "roda"
 
@@ -60,12 +62,12 @@ check-env:
 # Format Lua files
 [group('dev')]
 fmt:
-    lux fmt
+    lx --lua-version 5.5 fmt
 
 # Lint Lua files
 [group('dev')]
 lint:
-    lux lint
+    lx --lua-version 5.5 check
 
 # Run code quality checks
 [group('dev')]
@@ -77,7 +79,14 @@ check: lint fmt
 [group('test')]
 test-unit:
     @echo "Running unit tests..."
-    lux test
+    lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" test
+
+# Run busted directly with system Lua 5.5 (bypasses Lux test runner C extension issues)
+[private]
+test-busted:
+    @eval $(lx --lua-version 5.5 --lua-dir {{ lua55_dir }} path --no-loader 2>/dev/null | grep LUA_PATH | sed 's/export //') && \
+     eval $(lx --lua-version 5.5 --lua-dir {{ lua55_dir }} path --no-loader 2>/dev/null | grep LUA_CPATH | sed 's/export //') && \
+     {{ lua55_dir }}/bin/lua -e "require('busted.runner')({standalone=false})({'spec/'})"
 
 # Alias for test-unit
 [group('test')]
@@ -85,9 +94,17 @@ test: test-unit
 
 # --- Build ---
 
+# Ensure all lux dependencies are installed
+[private]
+ensure-deps:
+    @echo "Ensuring dependencies are installed..."
+    CFLAGS="-I{{ lua55_dir }}/include/lua5.5 -mmacosx-version-min={{ macos_version }}" \
+    MACOSX_DEPLOYMENT_TARGET={{ macos_version }} \
+    lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+
 # Build the standalone executable
 [group('build')]
-build: prep build-luv build-system compile
+build: ensure-deps prep build-luv build-system compile
 
 # Prepare the build directory
 [group('build')]
@@ -103,7 +120,7 @@ build-luv: prep
     if [ ! -d "{{ build_dir }}/luv" ]; then \
         git clone --recursive https://github.com/luvit/luv.git {{ build_dir }}/luv; \
     fi
-    cd {{ build_dir }}/luv && cmake -DBUILD_STATIC_LIBS=ON -DBUILD_MODULE=OFF -DWITH_LUA_ENGINE=Lua -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} .
+    cd {{ build_dir }}/luv && cmake -DBUILD_STATIC_LIBS=ON -DBUILD_MODULE=OFF -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} .
     cd {{ build_dir }}/luv && make
     cp {{ build_dir }}/luv/libluv.a {{ build_dir }}/
     cp {{ build_dir }}/luv/deps/libuv/libuv.a {{ build_dir }}/
@@ -126,9 +143,10 @@ build-system: prep
 compile:
     @echo "Compiling standalone binary..."
     cd lua && luastatic ../bin/spin.lua \
-      roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua ../argparse.lua \
+      roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
       ../{{ build_dir }}/libluv.a ../{{ build_dir }}/libuv.a ../{{ build_dir }}/libsystem.a {{ lua_lib }} \
-      -I{{ lua_include }}
+      -I{{ lua_include }} && \
+    cd .. && \
     mv lua/spin roda
 
 # Test the standalone executable
@@ -154,17 +172,42 @@ test-cli: build
 [group('test')]
 test-all: test-unit test-cli
 
+# Performance benchmark: verify roda adds minimal overhead to wrapped commands
+[group('test')]
+test-perf: build
+    @echo "Running performance benchmark..."
+    @echo "Benchmarking: roda --title 'test' -- sleep 1"
+    @hyperfine --warmup 1 --runs 5 \
+        --min-runs 3 \
+        --export-json .build/benchmark-results.json \
+        --export-markdown .build/benchmark-results.md \
+        "./roda --title 'perf-test' -- sleep 1"
+    @echo ""
+    @echo "Results saved to .build/benchmark-results.json and .build/benchmark-results.md"
+    @# Validate: sleep 1 should complete in < 1.3s (1s sleep + 0.3s overhead budget)
+    @MEAN=$(jq -r '.results[0].mean' .build/benchmark-results.json) && \
+        echo "Mean execution time: ${MEAN}s" && \
+        PASS=$(echo "$MEAN < 1.3" | bc -l) && \
+        if [ "$PASS" -eq 1 ]; then \
+            echo "✅ Performance check passed (threshold: 1.3s)"; \
+        else \
+            echo "❌ Performance check FAILED: mean $${MEAN}s exceeds 1.3s threshold"; \
+            exit 1; \
+        fi
+
 # --- Workflow ---
 
 # Install dependencies
 [group('workflow')]
 install:
-    lux install
+    CFLAGS="-I{{ lua55_dir }}/include/lua5.5 -mmacosx-version-min={{ macos_version }}" \
+    MACOSX_DEPLOYMENT_TARGET={{ macos_version }} \
+    lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
 
 # Run spinner directly without building (development mode)
 [group('dev')]
 dev *args:
-    @lua bin/spin.lua {{ args }}
+    @lx lua --no-lock -- bin/spin.lua {{ args }}
 
 # Full pre-commit validation (code quality + unit tests)
 [group('workflow')]
@@ -187,7 +230,7 @@ release: all
 [group('release')]
 publish: release
     @echo "Publishing to LuaRocks..."
-    lux publish
+    lx --lua-version 5.5 publish
 
 # --- Maintenance ---
 
@@ -196,9 +239,11 @@ publish: release
 [group('maintenance')]
 clean:
     rm -rf {{ build_dir }}
-    rm -f roda bin_spin.luastatic.c
+    rm -f roda
+    (unsetopt nomatch; rm -f *.luastatic.c) 2>/dev/null || true
+    (unsetopt nomatch; rm -f lua/*.luastatic.c) 2>/dev/null || true
 
 # Update lux dependencies
 [group('maintenance')]
 update:
-    lux update
+    lx --lua-version 5.5 update
