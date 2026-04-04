@@ -69,6 +69,11 @@ fmt:
 lint:
     lx --lua-version 5.5 check
 
+[doc("Lint for CI (Lua 5.4)")]
+[group('ci')]
+lint-ci:
+    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" --no-lock lint
+
 [doc("Run code quality checks")]
 [group('dev')]
 check: lint fmt
@@ -84,6 +89,12 @@ test-unit:
 [doc("Alias for test-unit")]
 [group('test')]
 test: test-unit
+
+[doc("Run unit tests for CI (Lua 5.4)")]
+[group('ci')]
+test-ci:
+    @echo "Running unit tests for CI..."
+    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" --no-lock test
 
 # --- Build ---
 
