@@ -20,15 +20,16 @@ set export := true
 
 # Export variables to recipe environment
 
-set shell := ["zsh", "-euo", "pipefail", "-c"]
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
+
+# Cross-platform shell configuration
+set shell := if os() == "windows" { windows-shell } else { ["bash", "-euo", "pipefail", "-c"] }
 
 # Consistent shell with strict mode
 
 set positional-arguments := true
 
 # Enable $@ for recipe arguments
-
-set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
 # Cross-platform support
 # --- Variables ---
