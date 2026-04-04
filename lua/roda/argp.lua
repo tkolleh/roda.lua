@@ -98,7 +98,7 @@ function argp:parse_short_or_long(arg, type)
 	local re
 	if type == "long" then
 		re = "^%-%-([^=]+)=?(.*)"
-	elseif "short" then
+	elseif type == "short" then
 		re = "^%-([^=]+)=?(.*)"
 	end
 
