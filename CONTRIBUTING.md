@@ -50,6 +50,14 @@ luarocks install luasystem
 luarocks install busted --dev
 ```
 
+### Git Hooks
+
+We use [Lefthook](https://github.com/evilmartians/lefthook) to manage Git hooks (formatting, linting, tests). After installing lefthook (e.g., via `brew install lefthook` or `npm install -g @evilmartians/lefthook`), set up the hooks by running:
+
+```bash
+lefthook install
+```
+
 ### Project Structure
 
 ```
