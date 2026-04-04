@@ -1,5 +1,4 @@
 --- roda/util.lua
---- @module roda.util
 --- @author TJ Kolleh
 --- @license EUPL-1.2
 

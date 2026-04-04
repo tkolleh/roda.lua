@@ -1,5 +1,4 @@
 --- roda/symbols.lua - Terminal symbols for final states
---- @module roda.symbols
 --- @author TJ Kolleh
 --- @license EUPL-1.2
 
