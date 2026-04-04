@@ -20,7 +20,7 @@ describe("ansi module", function()
 
 		it("should have move_to_col_1 code", function()
 			assert.is_string(ansi.move_to_col_1)
-			assert.equals("\27[G", ansi.move_to_col_1)
+			assert.equals("\r\27[1G", ansi.move_to_col_1)
 		end)
 
 		it("should have move_up code", function()
