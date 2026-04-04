@@ -23,9 +23,13 @@ jobs:
           # because it doesn't run tests (no busted dependency)
           version: 0.18.8
 
-      - name: Run tests
+      - name: Install just
         run: |
-          lx --lua-version 5.4 test
+          apt-get update
+          apt-get install -y just
+
+      - name: Run tests
+        run: just test-ci
 
   lint:
     name: Lint & Format
@@ -40,10 +44,15 @@ jobs:
           # See comment in test job above for version pinning rationale
           version: 0.18.8
 
+      - name: Install just
+        run: |
+          apt-get update
+          apt-get install -y just
+
       - name: Check formatting
         run: |
           lx fmt
           git diff --exit-code || (echo "::error::Code is not formatted. Run 'lx fmt' locally and commit the changes." && exit 1)
 
       - name: Run linter
-        run: lx --lua-version 5.4 lint
+        run: just lint-ci
