@@ -20,10 +20,9 @@ set export := true
 
 # Export variables to recipe environment
 
+# Shell configuration (bash works on macOS & Linux, Windows uses PowerShell)
+set shell := ["bash", "-euo", "pipefail", "-c"]
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
-
-# Cross-platform shell configuration
-set shell := if os() == "windows" { windows-shell } else { ["bash", "-euo", "pipefail", "-c"] }
 
 # Consistent shell with strict mode
 
