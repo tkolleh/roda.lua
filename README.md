@@ -1,25 +1,25 @@
 # Roda
 
-> Elegant terminal spinners for Lua
+> Elegant terminal spinners for bash scripts and Lua
 
 [![CI](https://github.com/tkolleh/roda.lua/actions/workflows/tests.yml/badge.svg)](https://github.com/tkolleh/roda.lua/actions/workflows/tests.yml)
 [![LuaRocks](https://img.shields.io/luarocks/v/tkolleh/roda)](https://luarocks.org/modules/tkolleh/roda)
 [![License: EUPL 1.2](https://img.shields.io/badge/License-EUPL--1.2-blue.svg)](https://opensource.org/licenses/EUPL-1.2)
 
-**Roda** (Portuguese for "wheel") is a pure Lua terminal spinner library.
+**Roda** (Portuguese for "wheel") is an elegant terminal spinner utility. It can be used as a standalone executable in bash scripts to show progress for long-running commands, or as a pure Lua library.
 
 ## Features
 
 ![Demo](./assets/demo.gif)
 
+- **Standalone Executable** - perfect for wrapping slow commands in bash scripts
 - **16 built-in spinner styles** - dots, line, arc, bounce, and more
 - **Colorized output**     - 9 terminal colors supported
 - **Terminal states**      - succeed, fail, warn, info with symbols
 - **Dynamic text updates** - change text while spinning
 - **Highly configurable**  - intervals, colors, prefixes, suffixes
 - **Minimal dependencies** - only requires `luasystem` and `luv`
-- **Lua 5.1+ compatible**  - works with Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT
-- **Asynchronous**         - non-blocking execution using `luv`
+- **Asynchronous**         - non-blocking execution
 
 ## Installation
 
@@ -35,7 +35,33 @@ lx add roda
 luarocks install roda
 ```
 
-## Quick Start
+## Usage (CLI)
+
+Use Roda to add elegant loading indicators to your bash scripts. Simply wrap your long-running commands with `roda`:
+
+```bash
+# Basic usage
+roda --title "Installing dependencies..." -- npm install
+
+# Custom spinner style
+roda --title "Waiting for database..." --spinner "dots2" -- sleep 5
+
+# Show output of the command (by default output is hidden while spinning)
+roda --show-output --title "Building project..." -- make build
+```
+
+### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--title TEXT` | Text to display next to the spinner |
+| `--spinner NAME` | Spinner style to use (e.g., `dots`, `line`, `arc`) |
+| `--show-output` | Display the command's stdout/stderr after it finishes |
+| `--` | Separates roda options from the command to execute |
+
+## Usage (Lua Library)
+
+Roda is compatible with Lua 5.1, 5.2, 5.3, 5.4, and LuaJIT.
 
 ```lua
 local roda = require("roda")
@@ -56,7 +82,7 @@ spinner:start()
 spinner:succeed()
 ```
 
-## Async Command Execution
+### Async Command Execution
 
 Roda supports running child processes asynchronously without blocking the Lua runtime.
 
@@ -76,9 +102,9 @@ end)
 roda.run()
 ```
 
-## API Reference
+### API Reference
 
-### `roda(opts)` / `roda.new(opts)`
+#### `roda(opts)` / `roda.new(opts)`
 
 Create a new spinner instance.
 
@@ -98,7 +124,7 @@ Create a new spinner instance.
 
 **Returns:** `Spinner` instance
 
-### Instance Methods
+#### Instance Methods
 
 - `:start(text?)` - Start the spinner. Optionally set new text.
 - `:stop()` - Stop and clear the spinner from the terminal.
@@ -113,7 +139,7 @@ Create a new spinner instance.
 - `:stopAndPersist(opts)` - Stop with custom symbol and text.
 - `:execute(command, args)` - Execute a child process asynchronously while spinning. Returns a Thunk that expects an `on_complete` callback.
 
-### Module Methods
+#### Module Methods
 
 - `roda.run()` - Run the libuv event loop. Blocks until all async tasks finish.
 
