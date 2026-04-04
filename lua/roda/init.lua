@@ -164,7 +164,7 @@ function Spinner:execute(command, args)
 		rslt.handle = handle
 
 		-- read the stdout stream (async)
-		uv.read_start(rslt.stdout, function(err, data)
+		uv.read_start(rslt.stdout, function(_err, data)
 			if data then
 				table.insert(output, data)
 			else
@@ -174,7 +174,7 @@ function Spinner:execute(command, args)
 		end)
 
 		-- read the stderr stream (async)
-		uv.read_start(rslt.stderr, function(err, data)
+		uv.read_start(rslt.stderr, function(_err, data)
 			if data then
 				table.insert(output, data)
 			else
