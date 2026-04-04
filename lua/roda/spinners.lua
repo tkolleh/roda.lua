@@ -1,6 +1,5 @@
 --- roda/spinners.lua - Spinner frame definitions
 --- Inspired by cli-spinners (https://github.com/sindresorhus/cli-spinners)
---- @module roda.spinners
 --- @author TJ Kolleh
 --- @license EUPL-1.2
 

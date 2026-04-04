@@ -1,5 +1,4 @@
 --- roda/ansi.lua - ANSI escape code
---- @module roda.ansi
 --- @author TJ Kolleh
 --- @license EUPL-1.2
 
@@ -56,8 +55,12 @@ function M.supports_color(stream)
 	local uv_ok, uv = pcall(require, "luv")
 	if uv_ok then
 		local fd = 2 -- stderr
-		if stream == io.stdout then fd = 1 end
-		if stream == io.stdin then fd = 0 end
+		if stream == io.stdout then
+			fd = 1
+		end
+		if stream == io.stdin then
+			fd = 0
+		end
 		return uv.guess_handle(fd) == "tty"
 	end
 	return true

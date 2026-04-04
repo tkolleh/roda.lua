@@ -1,7 +1,6 @@
 --- roda.lua - Elegant terminal spinner for Lua
 --- Roda (Portuguese for "wheel")
 ---
---- @module roda
 --- @author TJ Kolleh
 --- @license EUPL-1.2
 
@@ -123,7 +122,7 @@ function Spinner:execute(command, args)
 		local stderr_eof = false
 		local exit_code_saved = 0
 
-						local function check_done()
+		local function check_done()
 			if process_exited and stdout_eof and stderr_eof then
 				if exit_code_saved == 0 then
 					self:succeed()
@@ -134,10 +133,9 @@ function Spinner:execute(command, args)
 			end
 		end
 
-
-
 		-- evaluate the non-blocking process
-		local handle, spawn_err = uv.spawn(rslt.command, {
+		local handle, spawn_err
+		handle, spawn_err = uv.spawn(rslt.command, {
 			args = rslt.args,
 			stdio = { nil, rslt.stdout, rslt.stderr },
 		}, function(exit_code)
@@ -154,7 +152,7 @@ function Spinner:execute(command, args)
 			stdout_eof = true
 			stderr_eof = true
 			process_exited = true
-			exit_code_saved = 127  -- Command not found
+			exit_code_saved = 127 -- Command not found
 			-- Print spawn error to stderr
 			if spawn_err then
 				self._stream:write("error: " .. tostring(spawn_err) .. "\n")
