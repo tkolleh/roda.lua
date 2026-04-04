@@ -15,14 +15,15 @@ labels = ["terminal", "spinner", "cli", "ansi", "progress", "neovim"]
 url = "https://github.com/tkolleh/roda.lua/archive/refs/tags/v$(VERSION).zip"
 dev = "git+https://github.com/tkolleh/roda.lua.git"
 
+
+
 [dependencies]
 luasystem = ">=0.4.0"
 luv = ">= 1.44.2"
-argparse = ">=0.7.1" # New CLI parser
+# argp is vendored in lua/roda/argp.lua (git rockspec doesn't install source files)
 
 [test_dependencies]
-busted = ">=2.0"
-nlua = ">=0.3"
+busted = "2.3.0-1"
 
 [test]
 type = "busted"
@@ -31,14 +32,5 @@ type = "busted"
 luastatic = ">=0.0.12" # Standalone compiler
 
 [build]
-type = "command"
-build_command = "just build" # Delegate to Justfile
-
-[build.install.bin]
-"roda" = "roda"
-
-[build.install.lua]
-"roda" = "lua/roda/init.lua"
-"roda.spinners" = "lua/roda/spinners.lua"
-"roda.ansi" = "lua/roda/ansi.lua"
-"roda.symbols" = "lua/roda/symbols.lua"
+type = "none"
+copy_directories = ["bin", "spec"]
