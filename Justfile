@@ -146,6 +146,7 @@ compile:
       roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
       ../{{ build_dir }}/libluv.a ../{{ build_dir }}/libuv.a ../{{ build_dir }}/libsystem.a {{ lua_lib }} \
       -I{{ lua_include }} && \
+    mv spin.luastatic.c ../{{ build_dir }}/ && \
     cd .. && \
     mv lua/spin roda
 
