@@ -33,9 +33,13 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 # Cross-platform support
 # --- Variables ---
 
-lua_prefix := env('LUA_PREFIX', `brew --prefix lua`)
-lua55_dir := "/opt/homebrew/opt/lua"
-lua_include := lua55_dir / "include/lua5.5"
+# Lua installation prefix (default: brew --prefix lua on macOS, /usr on other platforms)
+lua_prefix := env('LUA_PREFIX', if os() == "macos" { `brew --prefix lua` } else { "/usr" })
+# Lua version for development headers (default: 5.5)
+lua_version := "5.5"
+# Include path for Lua development headers (override with LUA_INCLUDE env var)
+lua_include := env('LUA_INCLUDE', lua_prefix / ("include/lua" + lua_version))
+# Static Lua library (adjust path if using shared library)
 lua_lib := lua_prefix / "lib/liblua.a"
 macos_version := if os() == "macos" { `sw_vers -productVersion | cut -d. -f1-2` } else { "" }
 build_dir := absolute_path(clean(env('BUILD_DIR', '.build')))
@@ -84,7 +88,7 @@ check: lint fmt
 [group('test')]
 test-unit:
     @echo "Running unit tests..."
-    lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" test
+    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test
 
 [doc("Alias for test-unit")]
 [group('test')]
@@ -102,9 +106,9 @@ test-ci:
 [private]
 ensure-deps:
     @echo "Ensuring dependencies are installed..."
-    CFLAGS="-I{{ lua55_dir }}/include/lua5.5 {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
+    CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
     {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
 
 [doc("Build the standalone executable")]
 [group('build')]
@@ -201,9 +205,9 @@ test-perf: build
 [doc("Install dependencies")]
 [group('workflow')]
 install:
-    CFLAGS="-I{{ lua55_dir }}/include/lua5.5 {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
+    CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
     {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
 
 [doc("Run spinner directly without building (development mode)")]
 [group('dev')]
