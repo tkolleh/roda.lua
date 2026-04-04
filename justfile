@@ -76,7 +76,7 @@ lint:
 [doc("Lint for CI (Lua 5.4)")]
 [group('ci')]
 lint-ci:
-    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" --no-lock lint
+    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" lint
 
 [doc("Run code quality checks")]
 [group('dev')]
@@ -98,7 +98,7 @@ test: test-unit
 [group('ci')]
 test-ci:
     @echo "Running unit tests for CI..."
-    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" --no-lock test
+    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" test
 
 # --- Build ---
 
