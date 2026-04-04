@@ -1,5 +1,7 @@
 --- Argument parser similar to GNU-style CLI tools
 -- @module argp
+-- Vendored from https://github.com/uriid1/argp (MIT License)
+-- Copyright (c) 2024 uriid1
 local argp = {}
 
 --- Create a new argument parser instance

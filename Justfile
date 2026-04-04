@@ -34,9 +34,9 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 # --- Variables ---
 
 lua_prefix := env('LUA_PREFIX', '') || `brew --prefix lua`
+lua55_dir := "/opt/homebrew/opt/lua"
 lua_include := lua55_dir + "/include/lua5.5"
 lua_lib := lua_prefix + "/lib/liblua.a"
-lua55_dir := "/opt/homebrew/opt/lua"
 macos_version := `sw_vers -productVersion | cut -d. -f1-2`
 build_dir := env('BUILD_DIR', '') || '.build'
 package_name := "roda"
@@ -80,13 +80,6 @@ check: lint fmt
 test-unit:
     @echo "Running unit tests..."
     lx --lua-version 5.5 --lua-dir {{ lua55_dir }} --variables "WITH_SHARED_LIBUV=OFF" test
-
-# Run busted directly with system Lua 5.5 (bypasses Lux test runner C extension issues)
-[private]
-test-busted:
-    @eval $(lx --lua-version 5.5 --lua-dir {{ lua55_dir }} path --no-loader 2>/dev/null | grep LUA_PATH | sed 's/export //') && \
-     eval $(lx --lua-version 5.5 --lua-dir {{ lua55_dir }} path --no-loader 2>/dev/null | grep LUA_CPATH | sed 's/export //') && \
-     {{ lua55_dir }}/bin/lua -e "require('busted.runner')({standalone=false})({'spec/'})"
 
 # Alias for test-unit
 [group('test')]
@@ -241,8 +234,7 @@ publish: release
 clean:
     rm -rf {{ build_dir }}
     rm -f roda
-    (unsetopt nomatch; rm -f *.luastatic.c) 2>/dev/null || true
-    (unsetopt nomatch; rm -f lua/*.luastatic.c) 2>/dev/null || true
+    rm -f *.luastatic.c lua/*.luastatic.c || true
 
 # Update lux dependencies
 [group('maintenance')]

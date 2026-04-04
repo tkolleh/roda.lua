@@ -33,4 +33,4 @@ luastatic = ">=0.0.12" # Standalone compiler
 
 [build]
 type = "none"
-copy_directories = ["bin", "spec"]
+copy_directories = ["bin"]
