@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.13.0](https://github.com/tkolleh/roda.lua/compare/v1.12.1...v1.13.0) (2026-04-05)
+
+
+### Features
+
+* **17:** enhance release workflow to build and publish artifacts ([c1ac576](https://github.com/tkolleh/roda.lua/commit/c1ac5762361c5d45cbc3ba37272395fc3ac42fe8))
+
+
+### Bug Fixes
+
+* **#16:** correct path in demo record recipe ([5355de4](https://github.com/tkolleh/roda.lua/commit/5355de4018e7f8d6798a05ede1ffb2093099ecb1))
+* **#16:** use bash instead of zsh for shell portability ([58fa6fc](https://github.com/tkolleh/roda.lua/commit/58fa6fcf3df5e7406a70da8b7c3ea9030be1d2f2))
+* Correct demo gif ([091a76a](https://github.com/tkolleh/roda.lua/commit/091a76a12424cdd2e1c86224d82a2bb052e161f3))
+
 ## [1.12.2](https://github.com/tkolleh/roda.lua/compare/v1.12.1...v1.12.2) (2026-04-05)
 
 
