@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.13.2](https://github.com/tkolleh/roda.lua/compare/v1.13.1...v1.13.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** add Lux bin directory to PATH for luastatic in release workflow ([#25](https://github.com/tkolleh/roda.lua/issues/25)) ([19e5d5a](https://github.com/tkolleh/roda.lua/commit/19e5d5abb57a547590febd31d99a537b935b30ab))
+
+## [1.13.1](https://github.com/tkolleh/roda.lua/compare/v1.13.0...v1.13.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* **build:** build luv.so shared module alongside libluv.a for tests ([fe217e3](https://github.com/tkolleh/roda.lua/commit/fe217e355f97ad0f26b1bbe7bdbd881544b6bda1))
+* **build:** remove luv/luasystem from lux dependencies to fix CI build ([d53b78a](https://github.com/tkolleh/roda.lua/commit/d53b78aa1b3280d9425a6c81074d1aee8be2deda))
+
 ## [1.13.0](https://github.com/tkolleh/roda.lua/compare/v1.12.1...v1.13.0) (2026-04-05)
 
 
