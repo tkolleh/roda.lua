@@ -11,6 +11,7 @@
 ## Features
 
 ![Demo](./assets/demo.gif)
+*(Want to create a demo like this? Check out the [recording documentation](demo/recording-demo.md))*
 
 - **Standalone Executable** - perfect for wrapping slow commands in bash scripts
 - **16 built-in spinner styles** - dots, line, arc, bounce, and more
