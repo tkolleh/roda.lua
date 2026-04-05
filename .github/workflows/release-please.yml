@@ -24,8 +24,6 @@ jobs:
       - name: Checkout repository
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.release.outputs.tag_name }}
 
       - name: Install System Dependencies
         if: ${{ steps.release.outputs.release_created }}
@@ -56,6 +54,7 @@ jobs:
           LUA_LIB: "/usr/lib/x86_64-linux-gnu/liblua5.4.a"
           PATH: "${{ env.HOME }}/.lux/5.4/bin:${PATH}"
         run: |
+          export PATH="$HOME/.lux/5.4/bin:$PATH"
           just build
           sha256sum roda > roda.sha256
 
