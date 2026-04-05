@@ -15,12 +15,12 @@ labels = ["terminal", "spinner", "cli", "ansi", "progress", "neovim"]
 url = "https://github.com/tkolleh/roda.lua/archive/refs/tags/v$(VERSION).zip"
 dev = "git+https://github.com/tkolleh/roda.lua.git"
 
-
-
 [dependencies]
-luasystem = ">=0.4.0"
-luv = ">= 1.44.2"
 # argp is vendored in lua/roda/argp.lua (git rockspec doesn't install source files)
+# luv and luasystem are built manually by the justfile (build-luv, build-system recipes)
+# from git source — not installed via Lux/LuaRocks, because the CMake build fails on
+# Linux with multiarch Lua installations ($(LUA_LIBDIR) cannot be expanded;
+# see luarocks/luarocks#1155, #1257)
 
 [test_dependencies]
 busted = "2.3.0-1"
