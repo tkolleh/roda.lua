@@ -2,6 +2,7 @@ return {
   _all = {
     coverage = false,
     lpath = "lua/?.lua;lua/?/init.lua",
+    cpath = ".build/?.so;;",
     pattern = "_spec%.lua$",
     ROOT = { "spec/" },
   },
