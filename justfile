@@ -94,9 +94,9 @@ check: lint fmt
 
 [doc("Run unit tests (all spec/*_spec.lua files via lux/busted)")]
 [group('test')]
-test-unit:
+test-unit: build-luv
     @echo "Running unit tests..."
-    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} test
+    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} test
 
 [doc("Alias for test-unit")]
 [group('test')]
@@ -104,9 +104,9 @@ test: test-unit
 
 [doc("Run unit tests for CI (Lua 5.4)")]
 [group('ci')]
-test-ci:
+test-ci: build-luv
     @echo "Running unit tests for CI..."
-    lx --lua-version 5.4 test
+    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version 5.4 test
 
 # --- Build ---
 
@@ -130,12 +130,13 @@ prep:
 [group('build')]
 [private]
 build-luv: prep
-    @echo "Building static luv..."
+    @echo "Building static luv and shared module..."
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
-    cd {{ build_dir / 'luv' }} && cmake -DBUILD_STATIC_LIBS=ON -DBUILD_MODULE=OFF -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} .
+    cd {{ build_dir / 'luv' }} && cmake -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} .
     cd {{ build_dir / 'luv' }} && make
     cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
     cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
+    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/
 
 [doc("Statically compile luasystem (GCC/AR)")]
 [group('build')]
