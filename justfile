@@ -12,6 +12,8 @@ set unstable := true
 
 # Enable latest Just features
 
+mod demo
+
 set dotenv-load := true
 
 # Auto-load .env files
