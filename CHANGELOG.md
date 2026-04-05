@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.2](https://github.com/tkolleh/roda.lua/compare/v1.13.1...v1.13.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** add Lux bin directory to PATH for luastatic in release workflow ([#25](https://github.com/tkolleh/roda.lua/issues/25)) ([19e5d5a](https://github.com/tkolleh/roda.lua/commit/19e5d5abb57a547590febd31d99a537b935b30ab))
+
 ## [1.13.1](https://github.com/tkolleh/roda.lua/compare/v1.13.0...v1.13.1) (2026-04-05)
 
 
