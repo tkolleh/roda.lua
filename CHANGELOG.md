@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.6](https://github.com/tkolleh/roda.lua/compare/v1.13.5...v1.13.6) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** export local lux build dependencies to PATH natively ([abc8a7d](https://github.com/tkolleh/roda.lua/commit/abc8a7da34e5a2aaa23f747b6ef3882a1daa1ca1))
+
 ## [1.13.5](https://github.com/tkolleh/roda.lua/compare/v1.13.4...v1.13.5) (2026-04-05)
 
 
