@@ -1,6 +1,7 @@
 #!/usr/bin/env -S lx lua
 --- Demo script for Roda terminal spinner library
---- Run this script to see all features in action
+--- Run this script using: just demo run
+--- Record this script using: just demo record
 
 local system = require("system")
 
