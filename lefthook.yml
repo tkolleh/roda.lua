@@ -8,8 +8,9 @@ pre-commit:
     lint:
       glob: "*.lua"
       run: lx lint {staged_files}
-
-pre-push:
-  commands:
-    test:
-      run: just validate
+    justfile:
+      run: |
+        if echo {staged_files} | grep -q justfile; then
+          just --fmt
+        fi
+      stage_fixed: true
