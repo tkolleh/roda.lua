@@ -33,7 +33,7 @@ The demo script is located at `demo/demo.lua`. It showcases Roda's features incl
 asciinema rec demo.cast --cols 80 --rows 24
 
 # Run the demo
-lua demo/demo.lua
+just demo run
 
 # Press Ctrl+D to stop recording
 ```
@@ -75,14 +75,14 @@ Set FontSize 14
 Set Width 800
 Set Height 400
 
-Type "lua demo/demo.lua"
+Type "just demo run"
 Enter
 Sleep 15s
 ```
 
 Run:
 ```bash
-vhs demo/demo.tape
+just demo record
 ```
 
 ## Optimizing the GIF
