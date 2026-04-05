@@ -46,10 +46,6 @@ jobs:
           sudo mv /tmp/just/just /usr/local/bin/
           rm -rf /tmp/just
 
-      - name: Add Lux bin to PATH
-        if: ${{ steps.release.outputs.release_created }}
-        run: echo "$HOME/.lux/5.4/bin" >> "$GITHUB_PATH"
-
       - name: Build Executable
         if: ${{ steps.release.outputs.release_created }}
         env:
