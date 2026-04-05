@@ -1,96 +1,51 @@
 # Recording the Demo GIF
 
-This guide explains how to create the demo GIF shown in the README.
+Generate the demo GIF using [VHS](https://github.com/charmbracelet/vhs).
 
 ## Prerequisites
 
-Install the required tools:
-
 ```bash
-# macOS
-brew install asciinema
-brew install agg  # asciinema-agg for GIF conversion
-
-# Or use npm
-npm install -g svg-term-cli
+brew install vhs          # Terminal recorder
+lx install                # Or ensure roda is in package.path
 ```
 
 ## Demo Script
 
-The demo script is located at `demo/demo.lua`. It showcases Roda's features including:
-
+`demo/demo.lua` showcases Roda features:
 - Basic spinner usage
-- Different terminal states (succeed, fail, warn, info)
+- Terminal states (succeed, fail, warn, info)
 - Dynamic text updates
 - Different spinner styles
 
+Run interactively: `just demo run`
+
 ## Recording
 
-1. **Record the terminal session**:
-
-```bash
-# Start recording
-asciinema rec demo.cast --cols 80 --rows 24
-
-# Run the demo
-just demo run
-
-# Press Ctrl+D to stop recording
-```
-
-2. **Convert to GIF**:
-
-Using agg (recommended):
-```bash
-agg demo.cast assets/demo.gif --cols 80 --rows 24 --speed 1.0
-```
-
-Using svg-term:
-```bash
-svg-term --in demo.cast --out assets/demo.svg --window
-```
-
-## Tips
-
-- Use a clean terminal with a dark background
-- Set terminal to 80x24 for consistency
-- Use a monospace font that supports Unicode (e.g., JetBrains Mono, Fira Code)
-- Keep the demo under 15 seconds for a reasonable GIF size
-
-## Alternative: VHS
-
-[VHS](https://github.com/charmbracelet/vhs) is another excellent option:
-
-```bash
-brew install vhs
-```
-
-Create a `.tape` file:
-
-**File**: `demo/demo.tape`
-
-```tape
-Output assets/demo.gif
-Set FontSize 14
-Set Width 800
-Set Height 400
-
-Type "just demo run"
-Enter
-Sleep 15s
-```
-
-Run:
+Generate the GIF:
 ```bash
 just demo record
 ```
 
-## Optimizing the GIF
+This runs `vhs` with `demo/demo.tape`, producing `assets/demo.gif`.
 
-If the GIF is too large:
+## Tape Configuration
 
-```bash
-# Using gifsicle
-brew install gifsicle
-gifsicle -O3 --colors 64 assets/demo.gif -o assets/demo-optimized.gif
+`demo/demo.tape` configures the recording:
+```tape
+Output ../assets/demo.gif
+Set Shell "bash"
+Set FontSize 30
+Set Width 1200
+Set Height 600
+Set TypingSpeed 50ms
+Set PlaybackSpeed 1
 ```
+
+Customize settings like `FontSize`, `Width`, `Height` as needed.
+
+## Tips
+
+- Use a dark terminal background for contrast
+- Ensure terminal uses a monospace font (JetBrains Mono, Fira Code)
+- The demo runs ~18 seconds; adjust `Sleep` in the tape accordingly
+- For MP4 output: `vhs demo.tape --output ../assets/demo.mp4`
