@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.2](https://github.com/tkolleh/roda.lua/compare/v1.12.1...v1.12.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **#16:** correct path in demo record recipe ([5355de4](https://github.com/tkolleh/roda.lua/commit/5355de4018e7f8d6798a05ede1ffb2093099ecb1))
+* **#16:** use bash instead of zsh for shell portability ([58fa6fc](https://github.com/tkolleh/roda.lua/commit/58fa6fcf3df5e7406a70da8b7c3ea9030be1d2f2))
+
 ## [1.12.1](https://github.com/tkolleh/roda.lua/compare/v1.1.0...v1.12.1) (2026-04-04)
 
 
