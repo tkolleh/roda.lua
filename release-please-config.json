@@ -1,0 +1,14 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "extra-files": [
+        {
+          "type": "toml",
+          "path": "lux.toml",
+          "jsonpath": "$.version"
+        }
+      ]
+    }
+  }
+}
