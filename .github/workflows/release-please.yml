@@ -31,7 +31,7 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq build-essential cmake luarocks
+          sudo apt-get install -y -qq build-essential cmake luarocks lua5.4 liblua5.4-dev
 
       - name: Install Lux
         if: ${{ steps.release.outputs.release_created }}
@@ -50,6 +50,10 @@ jobs:
 
       - name: Build Executable
         if: ${{ steps.release.outputs.release_created }}
+        env:
+          LUA_VERSION: "5.4"
+          LUA_PREFIX: "/usr"
+          LUA_LIB: "/usr/lib/x86_64-linux-gnu/liblua5.4.a"
         run: |
           just build
           sha256sum roda > roda.sha256
@@ -58,6 +62,11 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         run: |
           lx generate-rockspec
+
+      - name: Validate Rockspec
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          luarocks lint *.rockspec
 
       - name: Upload Release Artifacts
         if: ${{ steps.release.outputs.release_created }}
