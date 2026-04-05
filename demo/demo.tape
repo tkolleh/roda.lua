@@ -6,13 +6,13 @@
 #   lx install  (or ensure roda is in package.path)
 #
 # Generate GIF:
-#   vhs demo.tape
+#   just demo record
 #
 # Generate MP4:
-#   vhs demo.tape --output assets/demo.mp4
+#   vhs demo.tape --output ../assets/demo.mp4
 
 # Output configuration
-Output assets/demo.gif
+Output ../assets/demo.gif
 Set Shell "zsh"
 
 # Set up a 1200x600 terminal
@@ -27,7 +27,7 @@ Set PlaybackSpeed 1
 Sleep 500ms
 
 # Show command being typed
-Type "lua demo.lua"
+Type "just demo run"
 Sleep 300ms
 Enter
 
