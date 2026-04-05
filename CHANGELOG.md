@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.3](https://github.com/tkolleh/roda.lua/compare/v1.13.2...v1.13.3) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** use $HOME in run step for PATH in release workflow ([#27](https://github.com/tkolleh/roda.lua/issues/27)) ([a1bb2fb](https://github.com/tkolleh/roda.lua/commit/a1bb2fb90821df787a98b604fae76f96d7045b1a))
+
 ## [1.13.2](https://github.com/tkolleh/roda.lua/compare/v1.13.1...v1.13.2) (2026-04-05)
 
 
