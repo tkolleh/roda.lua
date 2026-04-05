@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.4](https://github.com/tkolleh/roda.lua/compare/v1.13.3...v1.13.4) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** use $GITHUB_PATH for lux bin in release workflow ([#29](https://github.com/tkolleh/roda.lua/issues/29)) ([54fe971](https://github.com/tkolleh/roda.lua/commit/54fe971ab2ad191fedf9cd6e7415fb977ea0009b))
+
 ## [1.13.3](https://github.com/tkolleh/roda.lua/compare/v1.13.2...v1.13.3) (2026-04-05)
 
 
