@@ -55,6 +55,10 @@ jobs:
           sudo mv /tmp/just/just /usr/local/bin/
           rm -rf /tmp/just
 
+      - name: Install GitHub CLI (if missing)
+        run: |
+          which gh || sudo apt-get install -y gh
+
       - name: Check formatting
         run: |
           lx fmt
@@ -62,3 +66,10 @@ jobs:
 
       - name: Run linter
         run: just lint-ci
+
+      - name: Comment on PR if formatting needed
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment --edit-last --body $'## ⚠️ Formatting Required\n\nYour pull request contains Lua code that is not formatted according to the project\'s style guidelines.\n\n**To fix this locally:**\n\n1. Run `lx fmt` in the repository root.\n2. Commit the changes and push again.\n\n**Pro tip:** Install [lefthook](https://github.com/evilmartians/lefthook) and run `lefthook install` to automatically format your code on each commit.\n\nOnce you\'ve formatted your code, this check will pass and you can merge your PR.'

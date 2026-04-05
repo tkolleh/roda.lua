@@ -21,8 +21,8 @@ set dotenv-load := true
 set export := true
 
 # Export variables to recipe environment
-
 # Shell configuration (bash works on macOS & Linux, Windows uses PowerShell)
+
 set shell := ["bash", "-euo", "pipefail", "-c"]
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
@@ -31,17 +31,22 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 set positional-arguments := true
 
 # Enable $@ for recipe arguments
-
 # Cross-platform support
 # --- Variables ---
-
 # Lua installation prefix (default: brew --prefix lua on macOS, /usr on other platforms)
+
 lua_prefix := env('LUA_PREFIX', if os() == "macos" { `brew --prefix lua` } else { "/usr" })
+
 # Lua version for development headers (default: 5.5 on macOS, 5.4 on Linux)
+
 lua_version := env('LUA_VERSION', if os() == "macos" { "5.5" } else { "5.4" })
+
 # Include path for Lua development headers (override with LUA_INCLUDE env var)
+
 lua_include := env('LUA_INCLUDE', lua_prefix / ("include/lua" + lua_version))
+
 # Static Lua library (default: unversioned name; override with LUA_LIB env var)
+
 lua_lib_unversioned := lua_prefix / "lib/liblua.a"
 lua_lib := env('LUA_LIB', lua_lib_unversioned)
 macos_version := if os() == "macos" { `sw_vers -productVersion | cut -d. -f1-2` } else { "" }
@@ -69,12 +74,12 @@ check-env:
 [doc("Format Lua files")]
 [group('dev')]
 fmt:
-    lx --lua-version {{lua_version}} fmt
+    lx --lua-version {{ lua_version }} fmt
 
 [doc("Lint Lua files")]
 [group('dev')]
 lint:
-    lx --lua-version {{lua_version}} check
+    lx --lua-version {{ lua_version }} check
 
 [doc("Lint for CI (Lua 5.4)")]
 [group('ci')]
@@ -91,7 +96,7 @@ check: lint fmt
 [group('test')]
 test-unit:
     @echo "Running unit tests..."
-    lx --lua-version {{lua_version}} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test
+    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test
 
 [doc("Alias for test-unit")]
 [group('test')]
@@ -111,7 +116,7 @@ ensure-deps:
     @echo "Ensuring dependencies are installed..."
     CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
     {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version {{lua_version}} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
 
 [doc("Build the standalone executable")]
 [group('build')]
@@ -210,7 +215,7 @@ test-perf: build
 install:
     CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
     {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version {{lua_version}} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
 
 [doc("Run spinner directly without building (development mode)")]
 [group('dev')]
@@ -233,17 +238,17 @@ release: all
     @echo "Preparing release..."
     @echo "Release artifacts ready."
 
-[doc("Publish to LuaRocks via lux")]
 [confirm("Publish to LuaRocks? This action cannot be undone.")]
+[doc("Publish to LuaRocks via lux")]
 [group('release')]
 publish: release
     @echo "Publishing to LuaRocks..."
-    lx --lua-version {{lua_version}} publish
+    lx --lua-version {{ lua_version }} publish
 
 # --- Maintenance ---
 
-[doc("Clean build artifacts")]
 [confirm("Remove all build artifacts and binaries?")]
+[doc("Clean build artifacts")]
 [group('maintenance')]
 clean:
     rm -rf {{ build_dir }}
@@ -253,4 +258,4 @@ clean:
 [doc("Update lux dependencies")]
 [group('maintenance')]
 update:
-    lx --lua-version {{lua_version}} update
+    lx --lua-version {{ lua_version }} update
