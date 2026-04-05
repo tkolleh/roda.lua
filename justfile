@@ -84,7 +84,7 @@ lint:
 [doc("Lint for CI (Lua 5.4)")]
 [group('ci')]
 lint-ci:
-    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" lint
+    lx --lua-version 5.4 lint
 
 [doc("Run code quality checks")]
 [group('dev')]
@@ -96,7 +96,7 @@ check: lint fmt
 [group('test')]
 test-unit:
     @echo "Running unit tests..."
-    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test
+    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} test
 
 [doc("Alias for test-unit")]
 [group('test')]
@@ -106,7 +106,7 @@ test: test-unit
 [group('ci')]
 test-ci:
     @echo "Running unit tests for CI..."
-    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" test
+    lx --lua-version 5.4 test
 
 # --- Build ---
 
@@ -114,9 +114,7 @@ test-ci:
 [private]
 ensure-deps:
     @echo "Ensuring dependencies are installed..."
-    CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
-    {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} build --only-deps --no-lock
 
 [doc("Build the standalone executable")]
 [group('build')]
@@ -213,9 +211,7 @@ test-perf: build
 [doc("Install dependencies")]
 [group('workflow')]
 install:
-    CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
-    {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} build --only-deps --no-lock
 
 [doc("Run spinner directly without building (development mode)")]
 [group('dev')]
