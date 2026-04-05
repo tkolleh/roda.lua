@@ -13,7 +13,7 @@
 
 # Output configuration
 Output ../assets/demo.gif
-Set Shell "zsh"
+Set Shell "bash"
 
 # Set up a 1200x600 terminal
 Set FontSize 30
