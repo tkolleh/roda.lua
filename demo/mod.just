@@ -4,5 +4,5 @@ run:
 
 [doc("Record the demo and generate a GIF using VHS")]
 record:
-    vhs demo.tape
+    cd demo && vhs demo.tape
 
