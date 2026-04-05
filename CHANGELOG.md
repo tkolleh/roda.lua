@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.5](https://github.com/tkolleh/roda.lua/compare/v1.13.4...v1.13.5) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** use lx exec to resolve luastatic build dependency ([a03d119](https://github.com/tkolleh/roda.lua/commit/a03d1194e8e35b8e5717fb6c5939ef764945daba))
+
 ## [1.13.4](https://github.com/tkolleh/roda.lua/compare/v1.13.3...v1.13.4) (2026-04-05)
 
 
