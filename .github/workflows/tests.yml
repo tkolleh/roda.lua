@@ -23,6 +23,11 @@ jobs:
           # because it doesn't run tests (no busted dependency)
           version: 0.18.8
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y liblua5.4-dev cmake
+
       - name: Install just
         run: |
           mkdir -p /tmp/just
