@@ -41,6 +41,9 @@ lua_prefix := env('LUA_PREFIX', if os() == "macos" { `brew --prefix lua` } else 
 
 lua_version := env('LUA_VERSION', if os() == "macos" { "5.5" } else { "5.4" })
 
+# Add lux build dependencies to PATH so luastatic can be found automatically
+export PATH := absolute_path(".lux/" + lua_version + "/build_dependencies/" + lua_version + "/bin") + ":" + env_var('PATH')
+
 # Include path for Lua development headers (override with LUA_INCLUDE env var)
 
 lua_include := env('LUA_INCLUDE', lua_prefix / ("include/lua" + lua_version))
@@ -153,7 +156,7 @@ build-system: prep
 [private]
 compile:
     @echo "Compiling standalone binary..."
-    cd lua && lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
+    cd lua && luastatic ../bin/spin.lua \
       roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
       ../{{ build_dir / 'libluv.a' }} ../{{ build_dir / 'libuv.a' }} ../{{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
       -I{{ lua_include }} && \
