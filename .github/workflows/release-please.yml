@@ -46,15 +46,17 @@ jobs:
           sudo mv /tmp/just/just /usr/local/bin/
           rm -rf /tmp/just
 
+      - name: Add Lux bin to PATH
+        if: ${{ steps.release.outputs.release_created }}
+        run: echo "$HOME/.lux/5.4/bin" >> "$GITHUB_PATH"
+
       - name: Build Executable
         if: ${{ steps.release.outputs.release_created }}
         env:
           LUA_VERSION: "5.4"
           LUA_PREFIX: "/usr"
           LUA_LIB: "/usr/lib/x86_64-linux-gnu/liblua5.4.a"
-          PATH: "${{ env.HOME }}/.lux/5.4/bin:${PATH}"
         run: |
-          export PATH="$HOME/.lux/5.4/bin:$PATH"
           just build
           sha256sum roda > roda.sha256
 
