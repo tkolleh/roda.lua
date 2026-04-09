@@ -84,6 +84,8 @@ If your Docker socket is not at `/var/run/docker.sock` (e.g., Rancher Desktop wi
 export DOCKER_HOST="unix://$HOME/.rd/docker.sock"
 ```
 
+The `.actrc` file already includes `--container-daemon-socket -` to disable Docker socket bind-mounting into containers, which avoids mount failures on Rancher Desktop and Colima. If you use actions that require Docker-in-Docker, enable Administrative Access in Rancher Desktop (Preferences > Application > General) so the socket is created at `/var/run/docker.sock`.
+
 #### Pull the runner image
 
 ```bash

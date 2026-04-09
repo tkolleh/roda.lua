@@ -5,3 +5,8 @@
 # Required for macOS arm64 (M-series) — catthehacker images are amd64-only.
 # Harmless no-op on native amd64 hosts.
 --container-architecture linux/amd64
+
+# Disable Docker socket bind-mount into containers. Our workflows don't need
+# Docker-in-Docker. Without this, act fails on Rancher Desktop / Colima where
+# the socket is not at /var/run/docker.sock.
+--container-daemon-socket -
