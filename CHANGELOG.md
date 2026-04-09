@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.8](https://github.com/tkolleh/roda.lua/compare/v1.13.7...v1.13.8) (2026-04-09)
+
+
+### Bug Fixes
+
+* **ci:** consolidate LuaRocks publication to tag-triggered workflow ([#37](https://github.com/tkolleh/roda.lua/issues/37)) ([843baec](https://github.com/tkolleh/roda.lua/commit/843baec18968cf03ad49d19ba6bc0003c11ae087))
+
 ## [1.13.7](https://github.com/tkolleh/roda.lua/compare/v1.13.6...v1.13.7) (2026-04-09)
 
 
