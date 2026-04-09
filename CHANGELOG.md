@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.10](https://github.com/tkolleh/roda.lua/compare/v1.13.9...v1.13.10) (2026-04-09)
+
+
+### Bug Fixes
+
+* **ci:** remove invalid luarocks package from msys2 install list ([#43](https://github.com/tkolleh/roda.lua/issues/43)) ([c5b0335](https://github.com/tkolleh/roda.lua/commit/c5b0335f41283c97b66cd8dd9ba3f18181a35b7f))
+
 ## [1.13.9](https://github.com/tkolleh/roda.lua/compare/v1.13.8...v1.13.9) (2026-04-09)
 
 
