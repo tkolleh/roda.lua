@@ -56,7 +56,7 @@ jobs:
         run: just lint-ci
 
       - name: Comment on PR if formatting needed
-        if: failure() && github.event_name == 'pull_request'
+        if: ${{ !env.ACT && failure() && github.event_name == 'pull_request' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
