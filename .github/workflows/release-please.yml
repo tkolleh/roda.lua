@@ -62,7 +62,7 @@ jobs:
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-lua
-            mingw-w64-ucrt-x86_64-luarocks
+            mingw-w64-ucrt-x86_64-lua-luarocks
 
       - name: Install System Dependencies (Linux)
         if: matrix.target == 'linux'
