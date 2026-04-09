@@ -42,6 +42,7 @@ lua_prefix := env('LUA_PREFIX', if os() == "macos" { `brew --prefix lua` } else 
 lua_version := env('LUA_VERSION', if os() == "macos" { "5.5" } else { "5.4" })
 
 # Add lux build dependencies to PATH so luastatic can be found automatically
+
 export PATH := absolute_path(".lux/" + lua_version + "/build_dependencies/" + lua_version + "/bin") + ":" + env_var('PATH')
 
 # Include path for Lua development headers (override with LUA_INCLUDE env var)
@@ -55,6 +56,12 @@ lua_lib := env('LUA_LIB', lua_lib_unversioned)
 macos_version := if os() == "macos" { `sw_vers -productVersion | cut -d. -f1-2` } else { "" }
 build_dir := absolute_path(clean(env('BUILD_DIR', '.build')))
 package_name := "roda"
+
+# Cross-compilation support (set CMAKE_OSX_ARCHITECTURES and CC env vars for cross builds)
+
+cmake_osx_arch := env('CMAKE_OSX_ARCHITECTURES', '')
+cmake_osx_arch_flag := if cmake_osx_arch != "" { "-DCMAKE_OSX_ARCHITECTURES=" + cmake_osx_arch } else { "" }
+cc := env('CC', 'gcc')
 
 # --- Default ---
 
@@ -135,7 +142,7 @@ prep:
 build-luv: prep
     @echo "Building static luv and shared module..."
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
-    cd {{ build_dir / 'luv' }} && cmake -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} .
+    cd {{ build_dir / 'luv' }} && cmake -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
     cd {{ build_dir / 'luv' }} && make
     cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
     cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
@@ -147,7 +154,7 @@ build-luv: prep
 build-system: prep
     @echo "Building static luasystem..."
     {{ if path_exists(build_dir / "luasystem") == "true" { "" } else { "git clone https://github.com/o-lim/luasystem.git " + (build_dir / "luasystem") } }}
-    cd {{ build_dir / 'luasystem' }} && gcc -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
+    cd {{ build_dir / 'luasystem' }} && {{ cc }} -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
     cd {{ build_dir / 'luasystem' }} && ar rcs libsystem.a core.o compat.o time.o
     cp {{ build_dir / 'luasystem' / 'libsystem.a' }} {{ build_dir }}/
 
