@@ -13,7 +13,7 @@ permissions:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -74,9 +74,13 @@ jobs:
         run: |
           gh release upload ${{ steps.release.outputs.tag_name }} roda roda.sha256 *.rockspec
 
-      - name: Publish to LuaRocks
-        if: ${{ steps.release.outputs.release_created }}
-        env:
-          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
-        run: |
-          luarocks upload *.rockspec --api-key=${LUAROCKS_API_KEY}
+      # LuaRocks publication moved to publish.yml workflow (tag-triggered)
+      # to avoid dependency issues and simplify debugging. The publish.yml
+      # workflow uses lx upload which has built-in JSON handling and doesn't
+      # require system Lua JSON libraries like luarocks upload does.
+      # - name: Publish to LuaRocks
+      #   if: ${{ steps.release.outputs.release_created }}
+      #   env:
+      #     LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+      #   run: |
+      #     luarocks upload *.rockspec --api-key=${LUAROCKS_API_KEY}
