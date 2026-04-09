@@ -7,7 +7,6 @@ Roda (Portuguese for "wheel") is a pure Lua terminal spinner library and CLI too
 - `lua/roda/` – Core Lua library modules (`init.lua`, `ansi.lua`, `spinners.lua`, etc.)
 - `spec/` – Busted unit tests (`*_spec.lua`)
 - `demo/` – Example scripts and recordings
-- `docs/` – Documentation
 - `assets/` – Images and demo GIF
 - `bin/` – CLI entry point (`spin.lua`)
 - `.github/workflows/` – CI/CD pipelines (tests, publish, release)

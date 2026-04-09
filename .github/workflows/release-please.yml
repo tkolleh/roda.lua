@@ -33,8 +33,14 @@ jobs:
           - os: ubuntu-24.04
             name: linux-x86_64
             target: linux
+          - os: ubuntu-24.04-arm
+            name: linux-aarch64
+            target: linux
           - os: macos-latest
             name: macos-arm64
+            target: macos
+          - os: macos-latest
+            name: macos-x86_64
             target: macos
           - os: windows-latest
             name: windows-x86_64
@@ -101,7 +107,26 @@ jobs:
         run: |
           if [ "${{ matrix.target }}" = "linux" ]; then
             export LUA_PREFIX="/usr"
-            export LUA_LIB="/usr/lib/x86_64-linux-gnu/liblua5.4.a"
+            MULTIARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+            export LUA_LIB="/usr/lib/${MULTIARCH}/liblua5.4.a"
+            just build
+          elif [ "${{ matrix.target }}" = "macos" ] && [ "${{ matrix.name }}" = "macos-x86_64" ]; then
+            export MACOSX_DEPLOYMENT_TARGET="11.0"
+
+            # Build Lua 5.4 from source for x86_64
+            # (Homebrew lua@5.4 on ARM64 only provides arm64 libraries)
+            LUA_SRC_DIR="${{ runner.temp }}/lua-5.4.7"
+            curl -sL https://www.lua.org/ftp/lua-5.4.7.tar.gz | tar xz -C "${{ runner.temp }}"
+            cd "$LUA_SRC_DIR"
+            make macosx CC="clang -arch x86_64" AR="ar rc" MYCFLAGS="-arch x86_64" MYLDFLAGS="-arch x86_64"
+            make local
+            cd "${{ github.workspace }}"
+
+            export LUA_PREFIX="$LUA_SRC_DIR/install"
+            export LUA_LIB="$LUA_SRC_DIR/install/lib/liblua.a"
+            export LUA_INCLUDE="$LUA_SRC_DIR/install/include"
+            export CMAKE_OSX_ARCHITECTURES="x86_64"
+            export CC="clang -arch x86_64"
             just build
           elif [ "${{ matrix.target }}" = "macos" ]; then
             export LUA_PREFIX="$(brew --prefix lua@5.4)"
@@ -138,24 +163,56 @@ jobs:
             fi
           fi
 
+      - name: Verify Binary Architecture
+        if: matrix.target == 'macos'
+        run: |
+          EXPECTED_ARCH="${{ matrix.name == 'macos-arm64' && 'arm64' || 'x86_64' }}"
+          ACTUAL_ARCH=$(lipo -archs roda)
+          echo "Expected: $EXPECTED_ARCH, Got: $ACTUAL_ARCH"
+          if [ "$ACTUAL_ARCH" != "$EXPECTED_ARCH" ]; then
+            echo "::error::Binary architecture mismatch! Expected $EXPECTED_ARCH, got $ACTUAL_ARCH"
+            exit 1
+          fi
+          file roda
+
       - name: Generate Rockspec
-        if: matrix.target == 'linux'
+        if: matrix.name == 'linux-x86_64'
         run: |
           lx generate-rockspec
 
       - name: Validate Rockspec
-        if: matrix.target == 'linux'
+        if: matrix.name == 'linux-x86_64'
         run: |
           luarocks lint *.rockspec
 
-      - name: Upload Release Artifacts
+      - name: Upload Release Artifacts (with rockspec)
+        if: matrix.name == 'linux-x86_64'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ matrix.target }}" = "linux" ]; then
-            gh release upload ${{ needs.release-please.outputs.tag_name }} roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 *.rockspec --clobber
-          elif [ "${{ matrix.target }}" = "windows" ]; then
-            gh release upload ${{ needs.release-please.outputs.tag_name }} roda-${{ matrix.name }}.zip roda-${{ matrix.name }}.zip.sha256 --clobber
-          else
-            gh release upload ${{ needs.release-please.outputs.tag_name }} roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber
-          fi
+          gh release upload ${{ needs.release-please.outputs.tag_name }} \
+            roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 *.rockspec --clobber
+
+      - name: Upload Release Artifacts (Linux aarch64)
+        if: matrix.name == 'linux-aarch64'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.release-please.outputs.tag_name }} \
+            roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber
+
+      - name: Upload Release Artifacts (Windows)
+        if: matrix.target == 'windows'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.release-please.outputs.tag_name }} \
+            roda-${{ matrix.name }}.zip roda-${{ matrix.name }}.zip.sha256 --clobber
+
+      - name: Upload Release Artifacts (macOS)
+        if: matrix.target == 'macos'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ needs.release-please.outputs.tag_name }} \
+            roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber

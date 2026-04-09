@@ -24,13 +24,78 @@
 
 ## Installation
 
-### Using Lux (recommended)
+### Homebrew (macOS and Linux)
+
+```bash
+brew install tkolleh/tap/roda
+```
+
+Or tap first, then install:
+
+```bash
+brew tap tkolleh/tap
+brew install roda
+```
+
+### Standalone Binary (no Lua required)
+
+Download a prebuilt binary from the [latest release](https://github.com/tkolleh/roda.lua/releases/latest). Binaries are available for **macOS ARM64**, **macOS Intel**, **Linux x86\_64**, and **Linux ARM64**.
+
+#### macOS (Apple Silicon)
+
+```bash
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-macos-arm64.tar.gz
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-macos-arm64.tar.gz.sha256
+shasum -a 256 -c roda-macos-arm64.tar.gz.sha256
+tar xzf roda-macos-arm64.tar.gz
+chmod +x roda
+sudo mv roda /usr/local/bin/
+```
+
+#### macOS (Intel)
+
+```bash
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-macos-x86_64.tar.gz
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-macos-x86_64.tar.gz.sha256
+shasum -a 256 -c roda-macos-x86_64.tar.gz.sha256
+tar xzf roda-macos-x86_64.tar.gz
+chmod +x roda
+sudo mv roda /usr/local/bin/
+```
+
+#### Linux (x86\_64)
+
+```bash
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-linux-x86_64.tar.gz
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-linux-x86_64.tar.gz.sha256
+shasum -a 256 -c roda-linux-x86_64.tar.gz.sha256
+tar xzf roda-linux-x86_64.tar.gz
+chmod +x roda
+sudo mv roda /usr/local/bin/
+```
+
+#### Linux (ARM64)
+
+```bash
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-linux-aarch64.tar.gz
+curl -fSLO https://github.com/tkolleh/roda.lua/releases/latest/download/roda-linux-aarch64.tar.gz.sha256
+shasum -a 256 -c roda-linux-aarch64.tar.gz.sha256
+tar xzf roda-linux-aarch64.tar.gz
+chmod +x roda
+sudo mv roda /usr/local/bin/
+```
+
+### Lua Library
+
+If you want to use Roda as a Lua library in your own scripts or applications:
+
+#### Using Lux (recommended)
 
 ```bash
 lx add roda
 ```
 
-### Using LuaRocks
+#### Using LuaRocks
 
 ```bash
 luarocks install roda
