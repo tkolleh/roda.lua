@@ -35,3 +35,6 @@ bin_spin.luastatic.c
 spin.luastatic.c
 lua/spin.luastatic.c
 *.luastatic.c
+
+# Agent documentation (user-specific)
+AGENTS.md

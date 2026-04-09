@@ -27,10 +27,9 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          # Using v0.25.3 for publish (not v0.18.8 used in tests)
-          # Reason: v0.18.8 has bugs with lx upload causing 400 errors
-          # The publish workflow doesn't run tests, so no busted/penlight issues
-          version: 0.25.3
+          # Using v0.28.0 for publish (consistent with all workflows)
+          # The busted/penlight dependency issues are resolved in v0.28.0
+          version: 0.28.0
 
       - name: Install LuaRocks (for validation)
         run: |
