@@ -17,10 +17,6 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          # Using v0.28.0 (busted/penlight dependency issues resolved in lux-lib 0.8.0+)
-          # Previously pinned to v0.18.8 due to busted/penlight transitive dependency issues
-          # in newer versions (see lumen-oss/lux#722)
-          # All workflows now use v0.28.0 consistently
           version: 0.28.0
 
       - name: Install system dependencies
@@ -49,7 +45,6 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          # See comment in test job above for version upgrade rationale
           version: 0.28.0
 
       - name: Install just

@@ -4,7 +4,7 @@ name: Publish to LuaRocks
 on:
   push:
     tags:
-      - "v*.*.*"  # Only trigger on semver tags (e.g., v1.0.0)
+      - "v*.*.*"
   workflow_dispatch:
 
 jobs:
@@ -27,8 +27,6 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          # Using v0.28.0 for publish (consistent with all workflows)
-          # The busted/penlight dependency issues are resolved in v0.28.0
           version: 0.28.0
 
       - name: Install LuaRocks (for validation)
@@ -55,10 +53,8 @@ jobs:
           fi
           
           echo "✓ Rockspec valid: $ROCKSPEC"
-           rm -f "$ROCKSPEC"  # Clean up, lx upload will regenerate
+           rm -f "$ROCKSPEC"
 
-      # Sole LuaRocks publication point - uses lx upload which has built-in JSON
-      # handling and doesn't require system Lua JSON libraries
       - name: Upload to LuaRocks
         run: lx --verbose --lua-version 5.1 upload
         env:
