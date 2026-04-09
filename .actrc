@@ -10,3 +10,8 @@
 # Docker-in-Docker. Without this, act fails on Rancher Desktop / Colima where
 # the socket is not at /var/run/docker.sock.
 --container-daemon-socket -
+
+# Skip TLS verification inside containers. Corporate proxies (Netskope, Zscaler)
+# re-sign certificates with their own CA which the container doesn't trust.
+# Safe here — this only affects local act runs in throwaway containers.
+--env NODE_TLS_REJECT_UNAUTHORIZED=0
