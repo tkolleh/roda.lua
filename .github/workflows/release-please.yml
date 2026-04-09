@@ -56,6 +56,7 @@ jobs:
           install: >-
             git
             make
+            unzip
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-lua
@@ -77,23 +78,22 @@ jobs:
         with:
           version: 0.28.0
 
-      - name: Install just
+      - name: Copy Lux to MSYS2 (Windows)
+        if: matrix.target == 'windows'
+        run: cp "/c/Program Files/lux/lx.exe" /usr/bin/lx.exe
+
+      - name: Install just (Unix)
+        if: matrix.target != 'windows'
+        uses: extractions/setup-just@v2
+
+      - name: Install just (Windows)
+        if: matrix.target == 'windows'
         run: |
-          if [ "${{ matrix.target }}" = "linux" ]; then
-            mkdir -p /tmp/just
-            curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-unknown-linux-musl.tar.gz -o /tmp/just/just.tar.gz
-            tar -xzf /tmp/just/just.tar.gz -C /tmp/just
-            sudo mv /tmp/just/just /usr/local/bin/
-            rm -rf /tmp/just
-          elif [ "${{ matrix.target }}" = "macos" ]; then
-            brew install just
-          else
-            mkdir -p /tmp/just
-            curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-pc-windows-msvc.zip -o /tmp/just/just.zip
-            unzip /tmp/just/just.zip -d /tmp/just
-            mv /tmp/just/just.exe /usr/bin/
-            rm -rf /tmp/just
-          fi
+          mkdir -p /tmp/just
+          curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-pc-windows-msvc.zip -o /tmp/just/just.zip
+          unzip /tmp/just/just.zip -d /tmp/just
+          mv /tmp/just/just.exe /usr/bin/
+          rm -rf /tmp/just
 
       - name: Build Executable
         env:

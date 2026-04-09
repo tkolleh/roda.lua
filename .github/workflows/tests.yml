@@ -24,13 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua5.4 liblua5.4-dev cmake
 
-      - name: Install just
-        run: |
-          mkdir -p /tmp/just
-          curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-unknown-linux-musl.tar.gz -o /tmp/just/just.tar.gz
-          tar -xzf /tmp/just/just.tar.gz -C /tmp/just
-          sudo mv /tmp/just/just /usr/local/bin/
-          rm -rf /tmp/just
+      - uses: extractions/setup-just@v2
 
       - name: Run tests
         run: just test-ci
@@ -47,13 +41,7 @@ jobs:
         with:
           version: 0.28.0
 
-      - name: Install just
-        run: |
-          mkdir -p /tmp/just
-          curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-unknown-linux-musl.tar.gz -o /tmp/just/just.tar.gz
-          tar -xzf /tmp/just/just.tar.gz -C /tmp/just
-          sudo mv /tmp/just/just /usr/local/bin/
-          rm -rf /tmp/just
+      - uses: extractions/setup-just@v2
 
       - name: Install GitHub CLI (if missing)
         run: |
