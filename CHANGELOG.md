@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.9](https://github.com/tkolleh/roda.lua/compare/v1.13.8...v1.13.9) (2026-04-09)
+
+
+### Bug Fixes
+
+* trigger release to build cross-platform binaries ([#41](https://github.com/tkolleh/roda.lua/issues/41)) ([4da7ac5](https://github.com/tkolleh/roda.lua/commit/4da7ac5289152a44fe89a637468f4dbb639e91cf))
+
 ## [1.13.8](https://github.com/tkolleh/roda.lua/compare/v1.13.7...v1.13.8) (2026-04-09)
 
 
