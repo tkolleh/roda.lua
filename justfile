@@ -155,12 +155,13 @@ build-system: prep
 [group('build')]
 [private]
 compile:
+    @echo {{ assert(path_exists("bin/spin.lua") == "true", "bin/spin.lua not found - CLI entry point missing") }}
     @echo "Compiling standalone binary..."
-    cd lua && luastatic ../bin/spin.lua \
+    cd lua && lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
       roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
-      ../{{ build_dir / 'libluv.a' }} ../{{ build_dir / 'libuv.a' }} ../{{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
+      {{ build_dir / 'libluv.a' }} {{ build_dir / 'libuv.a' }} {{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
       -I{{ lua_include }} && \
-    mv spin.luastatic.c ../{{ build_dir }}/ && \
+    mv spin.luastatic.c {{ build_dir }}/ && \
     cd .. && \
     mv lua/spin roda
 

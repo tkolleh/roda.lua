@@ -35,7 +35,8 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          version: 0.25.3
+          # Using v0.28.0 for consistency with all workflows (busted/penlight issues resolved)
+          version: 0.28.0
 
       - name: Install just
         if: ${{ steps.release.outputs.release_created }}
