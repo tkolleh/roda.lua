@@ -60,6 +60,6 @@ jobs:
       # Sole LuaRocks publication point - uses lx upload which has built-in JSON
       # handling and doesn't require system Lua JSON libraries
       - name: Upload to LuaRocks
-        run: lx --lua-version 5.1 upload --verbose
+        run: lx --verbose --lua-version 5.1 upload
         env:
           LUX_API_KEY: ${{ secrets.LUX_API_KEY }}
