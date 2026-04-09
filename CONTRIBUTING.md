@@ -77,10 +77,11 @@ You can run GitHub Actions workflows locally using [act](https://github.com/nekt
 - Docker runtime ([Rancher Desktop](https://rancherdesktop.io/), [OrbStack](https://orbstack.dev/), or Docker Desktop)
 - [GitHub CLI](https://cli.github.com/) authenticated: `gh auth login`
 
-If your Docker socket is not at the default path (e.g., Rancher Desktop uses `~/.rd/run/docker.sock`), set `DOCKER_HOST`:
+If your Docker socket is not at `/var/run/docker.sock` (e.g., Rancher Desktop without Administrative Access), set `DOCKER_HOST`:
 
 ```bash
-export DOCKER_HOST="unix://$HOME/.rd/run/docker.sock"
+# Rancher Desktop default socket path
+export DOCKER_HOST="unix://$HOME/.rd/docker.sock"
 ```
 
 #### Pull the runner image
