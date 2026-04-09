@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.7](https://github.com/tkolleh/roda.lua/compare/v1.13.6...v1.13.7) (2026-04-09)
+
+
+### Bug Fixes
+
+* **build:** Add missing CLI entry point and upgrade Lux to v0.28.0 ([#35](https://github.com/tkolleh/roda.lua/issues/35)) ([259d3db](https://github.com/tkolleh/roda.lua/commit/259d3dbedff87bdd6db5bce1055c45293b7e354b))
+
 ## [1.13.6](https://github.com/tkolleh/roda.lua/compare/v1.13.5...v1.13.6) (2026-04-05)
 
 
