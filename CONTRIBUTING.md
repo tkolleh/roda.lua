@@ -52,11 +52,54 @@ luarocks install busted --dev
 
 ### Git Hooks
 
-We use [Lefthook](https://github.com/evilmartians/lefthook) to manage Git hooks (formatting, linting, tests). After installing lefthook (e.g., via `brew install lefthook` or `npm install -g @evilmartians/lefthook`), set up the hooks by running:
+We use [Lefthook](https://github.com/evilmartians/lefthook) to manage Git hooks. After installing lefthook (e.g., via `brew install lefthook`), set up the hooks by running:
 
 ```bash
 lefthook install
 ```
+
+Pre-commit hooks run automatically on `git commit`:
+
+| Hook | Scope | What it does |
+|------|-------|-------------|
+| format | `*.lua` files | Auto-formats with `lx fmt` |
+| lint | `*.lua` files | Lints with `lx lint` |
+| justfile | justfile | Auto-formats with `just --fmt` |
+| actionlint | `.github/workflows/*.yml` | Lints GitHub Actions workflows (requires [actionlint](https://github.com/rhysd/actionlint): `brew install actionlint`) |
+
+### Local CI Verification (macOS)
+
+You can run GitHub Actions workflows locally using [act](https://github.com/nektos/act) and Docker. This lets you validate CI changes without pushing.
+
+#### Prerequisites
+
+- [act](https://github.com/nektos/act): `brew install act`
+- Docker runtime ([Rancher Desktop](https://rancherdesktop.io/), [OrbStack](https://orbstack.dev/), or Docker Desktop)
+- [GitHub CLI](https://cli.github.com/) authenticated: `gh auth login`
+
+If your Docker socket is not at the default path (e.g., Rancher Desktop uses `~/.rd/run/docker.sock`), set `DOCKER_HOST`:
+
+```bash
+export DOCKER_HOST="unix://$HOME/.rd/run/docker.sock"
+```
+
+#### Pull the runner image
+
+```bash
+docker pull ghcr.io/catthehacker/ubuntu:act-24.04
+```
+
+The `.actrc` file in the repo root maps `ubuntu-24.04` to this image and sets the container architecture for Apple Silicon compatibility.
+
+#### Available recipes
+
+```bash
+just act-test      # Run the test job (apt-get, Lux, just, unit tests)
+just act-lint      # Run the lint job (formatting check, linter)
+just act-publish   # Validate rockspec generation (upload step skipped)
+```
+
+Steps that require GitHub API access or external secrets (PR comments, LuaRocks upload, release-please) are automatically skipped when running under act.
 
 ### Project Structure
 
