@@ -1,0 +1,7 @@
+# Map ubuntu-24.04 runner label to catthehacker medium image (24.04 variant).
+# Without this, act may not resolve the runner label correctly.
+-P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:act-24.04
+
+# Required for macOS arm64 (M-series) — catthehacker images are amd64-only.
+# Harmless no-op on native amd64 hosts.
+--container-architecture linux/amd64
