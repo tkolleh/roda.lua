@@ -187,13 +187,8 @@ jobs:
         run: |
           luarocks lint *.rockspec
 
-<<<<<<< ci/local-testing-and-actionlint
-      - name: Upload Release Artifacts
-        if: ${{ !env.ACT }}
-=======
       - name: Upload Release Artifacts (with rockspec)
-        if: matrix.name == 'linux-x86_64'
->>>>>>> main
+        if: ${{ !env.ACT && matrix.name == 'linux-x86_64' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -201,7 +196,7 @@ jobs:
             roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 *.rockspec --clobber
 
       - name: Upload Release Artifacts (Linux aarch64)
-        if: matrix.name == 'linux-aarch64'
+        if: ${{ !env.ACT && matrix.name == 'linux-aarch64' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -209,7 +204,7 @@ jobs:
             roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber
 
       - name: Upload Release Artifacts (Windows)
-        if: matrix.target == 'windows'
+        if: ${{ !env.ACT && matrix.target == 'windows' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -217,7 +212,7 @@ jobs:
             roda-${{ matrix.name }}.zip roda-${{ matrix.name }}.zip.sha256 --clobber
 
       - name: Upload Release Artifacts (macOS)
-        if: matrix.target == 'macos'
+        if: ${{ !env.ACT && matrix.target == 'macos' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
