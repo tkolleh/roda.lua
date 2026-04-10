@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/tkolleh/roda.lua/compare/v1.13.10...v1.14.0) (2026-04-09)
+
+
+### Features
+
+* add Homebrew formula support and expand CI platform matrix ([010db21](https://github.com/tkolleh/roda.lua/commit/010db21af30cb779dfc33339467e4c5a98cf8039))
+
 ## [1.13.10](https://github.com/tkolleh/roda.lua/compare/v1.13.9...v1.13.10) (2026-04-09)
 
 
