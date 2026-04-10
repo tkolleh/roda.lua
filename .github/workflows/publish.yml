@@ -29,7 +29,7 @@ jobs:
           echo "Generating rockspec..."
           lx generate-rockspec
           
-          ROCKSPEC=$(ls -1 *.rockspec 2>/dev/null | head -1)
+          ROCKSPEC=$(find . -maxdepth 1 -name '*.rockspec' -print -quit)
           if [[ -z "$ROCKSPEC" ]]; then
             echo "::error::No rockspec file generated"
             exit 1
@@ -46,6 +46,7 @@ jobs:
            rm -f "$ROCKSPEC"
 
       - name: Upload to LuaRocks
+        if: ${{ !env.ACT }}
         run: lx --verbose --lua-version 5.1 upload
         env:
           LUX_API_KEY: ${{ secrets.LUX_API_KEY }}

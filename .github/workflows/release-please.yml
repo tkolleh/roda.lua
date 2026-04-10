@@ -18,7 +18,9 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - name: Release Please
+        if: ${{ !env.ACT }}
+        uses: googleapis/release-please-action@v4
         id: release
         with:
           token: ${{ secrets.PAT }}
@@ -186,7 +188,7 @@ jobs:
           luarocks lint *.rockspec
 
       - name: Upload Release Artifacts (with rockspec)
-        if: matrix.name == 'linux-x86_64'
+        if: ${{ !env.ACT && matrix.name == 'linux-x86_64' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -194,7 +196,7 @@ jobs:
             roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 *.rockspec --clobber
 
       - name: Upload Release Artifacts (Linux aarch64)
-        if: matrix.name == 'linux-aarch64'
+        if: ${{ !env.ACT && matrix.name == 'linux-aarch64' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -202,7 +204,7 @@ jobs:
             roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber
 
       - name: Upload Release Artifacts (Windows)
-        if: matrix.target == 'windows'
+        if: ${{ !env.ACT && matrix.target == 'windows' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -210,7 +212,7 @@ jobs:
             roda-${{ matrix.name }}.zip roda-${{ matrix.name }}.zip.sha256 --clobber
 
       - name: Upload Release Artifacts (macOS)
-        if: matrix.target == 'macos'
+        if: ${{ !env.ACT && matrix.target == 'macos' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

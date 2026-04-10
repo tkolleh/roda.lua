@@ -253,6 +253,23 @@ publish: release
     @echo "Publishing to LuaRocks..."
     lx --lua-version {{ lua_version }} publish
 
+# --- Local CI (act) ---
+
+[doc("Run test job locally via act (requires: docker, gh auth login)")]
+[group('ci')]
+act-test:
+    act push --job test -W .github/workflows/tests.yml -s GITHUB_TOKEN="$(gh auth token)"
+
+[doc("Run lint job locally via act")]
+[group('ci')]
+act-lint:
+    act push --job lint -W .github/workflows/tests.yml -s GITHUB_TOKEN="$(gh auth token)"
+
+[doc("Run publish validation locally via act (upload step skipped)")]
+[group('ci')]
+act-publish:
+    act workflow_dispatch -W .github/workflows/publish.yml -s GITHUB_TOKEN="$(gh auth token)"
+
 # --- Maintenance ---
 
 [confirm("Remove all build artifacts and binaries?")]

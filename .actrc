@@ -1,0 +1,17 @@
+# Map ubuntu-24.04 runner label to catthehacker medium image (24.04 variant).
+# Without this, act may not resolve the runner label correctly.
+-P ubuntu-24.04=ghcr.io/catthehacker/ubuntu:act-24.04
+
+# Required for macOS arm64 (M-series) — catthehacker images are amd64-only.
+# Harmless no-op on native amd64 hosts.
+--container-architecture linux/amd64
+
+# Disable Docker socket bind-mount into containers. Our workflows don't need
+# Docker-in-Docker. Without this, act fails on Rancher Desktop / Colima where
+# the socket is not at /var/run/docker.sock.
+--container-daemon-socket -
+
+# Skip TLS verification inside containers. Corporate proxies (Netskope, Zscaler)
+# re-sign certificates with their own CA which the container doesn't trust.
+# Safe here — this only affects local act runs in throwaway containers.
+--env NODE_TLS_REJECT_UNAUTHORIZED=0
