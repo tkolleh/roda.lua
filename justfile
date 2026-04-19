@@ -164,7 +164,11 @@ build-luv: prep
 build-system: prep
     @echo "Building static luasystem..."
     {{ if path_exists(build_dir / "luasystem") == "true" { "" } else { "git clone https://github.com/o-lim/luasystem.git " + (build_dir / "luasystem") } }}
-    cd {{ build_dir / 'luasystem' }} && {{ cc }} -Wno-error=incompatible-pointer-types -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
+    cd {{ build_dir / 'luasystem' }} && {{ cc }} \
+      -Wno-error=incompatible-pointer-types \
+      {{ if os() == "windows" { "-D_WIN32_WINNT=0x0601" } else { "" } }} \
+      -c src/core.c src/compat.c src/time.c \
+      -I{{ lua_include }}
     cd {{ build_dir / 'luasystem' }} && ar rcs libsystem.a core.o compat.o time.o
     cp {{ build_dir / 'luasystem' / 'libsystem.a' }} {{ build_dir }}/
 
@@ -174,13 +178,14 @@ build-system: prep
 compile:
     @echo {{ assert(path_exists("bin/spin.lua") == "true", "bin/spin.lua not found - CLI entry point missing") }}
     @echo "Compiling standalone binary..."
-    cd lua && lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
+    cd lua && PATH="/ucrt64/bin:$PATH" lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
       roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
       {{ build_dir / 'libluv.a' }} {{ build_dir / 'libuv.a' }} {{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
+      {{ if os() == "windows" { "-lwinmm -lws2_32" } else { "" } }} \
       -I{{ lua_include }} && \
     mv spin.luastatic.c {{ build_dir }}/ && \
     cd .. && \
-    mv lua/spin roda
+    mv lua/{{ if os() == "windows" { "spin.exe" } else { "spin" } }} {{ if os() == "windows" { "roda.exe" } else { "roda" } }}
 
 [doc("Test the standalone executable")]
 [group('test')]
