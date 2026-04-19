@@ -153,10 +153,10 @@ build-luv: prep
     @echo "Building static luv and shared module..."
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
     cd {{ build_dir / 'luv' }} && cmake -DCMAKE_C_FLAGS="-Wno-error=incompatible-pointer-types" -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
-    cd {{ build_dir / 'luv' }} && make
+    cd {{ build_dir / 'luv' }} && cmake --build .
     cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
     cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
-    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/
+    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/ 2>/dev/null || cp {{ build_dir / 'luv' / 'luv.dll' }} {{ build_dir }}/ 2>/dev/null || true
 
 [doc("Statically compile luasystem (GCC/AR)")]
 [group('build')]
