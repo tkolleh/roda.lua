@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.5](https://github.com/tkolleh/roda.lua/compare/v1.16.4...v1.16.5) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** fix Windows build and upgrade Lux + action dependencies ([#63](https://github.com/tkolleh/roda.lua/issues/63)) ([b693dab](https://github.com/tkolleh/roda.lua/commit/b693dab629067b65a90d51fbefa23963c37a194f))
+
 ## [1.16.4](https://github.com/tkolleh/roda.lua/compare/v1.16.3...v1.16.4) (2026-04-19)
 
 
