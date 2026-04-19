@@ -154,10 +154,9 @@ build-luv: prep
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
     cd {{ build_dir / 'luv' }} && cmake -DCMAKE_C_FLAGS="-Wno-error=incompatible-pointer-types" -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
     cd {{ build_dir / 'luv' }} && cmake --build .
-    BD=$(cygpath -u '{{ build_dir }}' 2>/dev/null || echo '{{ build_dir }}') && \
-    cp "$BD/luv/libluv.a" "$BD/" && \
-    cp "$BD/luv/deps/libuv/libuv.a" "$BD/" && \
-    (cp "$BD/luv/luv.so" "$BD/" 2>/dev/null || cp "$BD/luv/luv.dll" "$BD/" 2>/dev/null || true)
+    cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
+    cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
+    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/ 2>/dev/null || cp {{ build_dir / 'luv' / 'luv.dll' }} {{ build_dir }}/ 2>/dev/null || true
 
 [doc("Statically compile luasystem (GCC/AR)")]
 [group('build')]
@@ -167,11 +166,10 @@ build-system: prep
     {{ if path_exists(build_dir / "luasystem") == "true" { "" } else { "git clone https://github.com/o-lim/luasystem.git " + (build_dir / "luasystem") } }}
     cd {{ build_dir / 'luasystem' }} && {{ cc }} \
       -Wno-error=incompatible-pointer-types \
-      {{ if os() == "windows" { "-D_WIN32_WINNT=0x0601" } else { "" } }} \
       -c src/core.c src/compat.c src/time.c \
       -I{{ lua_include }}
     cd {{ build_dir / 'luasystem' }} && ar rcs libsystem.a core.o compat.o time.o
-    BD=$(cygpath -u '{{ build_dir }}' 2>/dev/null || echo '{{ build_dir }}') && cp "$BD/luasystem/libsystem.a" "$BD/"
+    cp {{ build_dir / 'luasystem' / 'libsystem.a' }} {{ build_dir }}/
 
 [doc("Compile the final binary using luastatic")]
 [group('build')]
@@ -179,14 +177,13 @@ build-system: prep
 compile:
     @echo {{ assert(path_exists("bin/spin.lua") == "true", "bin/spin.lua not found - CLI entry point missing") }}
     @echo "Compiling standalone binary..."
-    cd lua && PATH="/ucrt64/bin:$PATH" lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
+    cd lua && lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
       roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
       {{ build_dir / 'libluv.a' }} {{ build_dir / 'libuv.a' }} {{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
-      {{ if os() == "windows" { "-lwinmm -lws2_32" } else { "" } }} \
       -I{{ lua_include }} && \
-    mv spin.luastatic.c "$(cygpath -u '{{ build_dir }}' 2>/dev/null || echo '{{ build_dir }}')/" && \
+    mv spin.luastatic.c {{ build_dir }}/ && \
     cd .. && \
-    mv lua/{{ if os() == "windows" { "spin.exe" } else { "spin" } }} {{ if os() == "windows" { "roda.exe" } else { "roda" } }}
+    mv lua/spin roda
 
 [doc("Test the standalone executable")]
 [group('test')]

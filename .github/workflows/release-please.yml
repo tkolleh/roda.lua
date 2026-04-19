@@ -124,45 +124,52 @@ jobs:
         if: matrix.target == 'windows'
         run: echo "${{ github.workspace }}/.lux/5.4/build_dependencies/5.4/bin" >> "$GITHUB_PATH"
 
-      - name: Build Executable
-        env:
-          LUA_VERSION: "5.4"
+      - name: Build Executable (Linux)
+        if: matrix.target == 'linux'
         run: |
-          if [ "${{ matrix.target }}" = "linux" ]; then
-            export LUA_PREFIX="/usr"
-            MULTIARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
-            export LUA_LIB="/usr/lib/${MULTIARCH}/liblua5.4.a"
-            just build
-          elif [ "${{ matrix.target }}" = "macos" ] && [ "${{ matrix.name }}" = "macos-x86_64" ]; then
-            export MACOSX_DEPLOYMENT_TARGET="11.0"
+          export LUA_PREFIX="/usr"
+          MULTIARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+          export LUA_LIB="/usr/lib/${MULTIARCH}/liblua5.4.a"
+          just build
 
-            # Build Lua 5.4 from source for x86_64
-            # (Homebrew lua@5.4 on ARM64 only provides arm64 libraries)
-            LUA_SRC_DIR="${{ runner.temp }}/lua-5.4.7"
-            curl -sL https://www.lua.org/ftp/lua-5.4.7.tar.gz | tar xz -C "${{ runner.temp }}"
-            cd "$LUA_SRC_DIR"
-            make macosx CC="clang -arch x86_64" AR="ar rc" MYCFLAGS="-arch x86_64" MYLDFLAGS="-arch x86_64"
-            make local
-            cd "${{ github.workspace }}"
+      - name: Build Executable (macOS x86_64)
+        if: matrix.target == 'macos' && matrix.name == 'macos-x86_64'
+        run: |
+          export MACOSX_DEPLOYMENT_TARGET="11.0"
 
-            export LUA_PREFIX="$LUA_SRC_DIR/install"
-            export LUA_LIB="$LUA_SRC_DIR/install/lib/liblua.a"
-            export LUA_INCLUDE="$LUA_SRC_DIR/install/include"
-            export CMAKE_OSX_ARCHITECTURES="x86_64"
-            export CC="clang -arch x86_64"
-            just build
-          elif [ "${{ matrix.target }}" = "macos" ]; then
-            export LUA_PREFIX="$(brew --prefix lua@5.4)"
-            export LUA_LIB="$LUA_PREFIX/lib/liblua.a"
-            export MACOSX_DEPLOYMENT_TARGET="11.0"
-            just build
-          else
-            export CC="gcc"
-            export LUA_PREFIX="/ucrt64"
-            export LUA_LIB="/ucrt64/lib/liblua.a"
-            export LUA_INCLUDE="/ucrt64/include"
-            just --shell bash build
-          fi
+          # Build Lua 5.4 from source for x86_64
+          # (Homebrew lua@5.4 on ARM64 only provides arm64 libraries)
+          LUA_SRC_DIR="${{ runner.temp }}/lua-5.4.7"
+          curl -sL https://www.lua.org/ftp/lua-5.4.7.tar.gz | tar xz -C "${{ runner.temp }}"
+          cd "$LUA_SRC_DIR"
+          make macosx CC="clang -arch x86_64" AR="ar rc" MYCFLAGS="-arch x86_64" MYLDFLAGS="-arch x86_64"
+          make local
+          cd "${{ github.workspace }}"
+
+          export LUA_PREFIX="$LUA_SRC_DIR/install"
+          export LUA_LIB="$LUA_SRC_DIR/install/lib/liblua.a"
+          export LUA_INCLUDE="$LUA_SRC_DIR/install/include"
+          export CMAKE_OSX_ARCHITECTURES="x86_64"
+          export CC="clang -arch x86_64"
+          just build
+
+      - name: Build Executable (macOS arm64)
+        if: matrix.target == 'macos' && matrix.name == 'macos-arm64'
+        run: |
+          export LUA_PREFIX="$(brew --prefix lua@5.4)"
+          export LUA_LIB="$LUA_PREFIX/lib/liblua.a"
+          export MACOSX_DEPLOYMENT_TARGET="11.0"
+          just build
+
+      - name: Build Executable (Windows)
+        if: matrix.target == 'windows'
+        env:
+          BUILD_DIR: ${{ github.workspace }}/.build
+          LUA_PREFIX: /ucrt64
+          LUA_LIB: /ucrt64/lib/liblua.a
+          LUA_INCLUDE: /ucrt64/include
+          LUA_VERSION: "5.4"
+        run: bash bin/build-windows.sh
 
       - name: Package Artifacts
         run: |
