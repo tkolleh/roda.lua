@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.6](https://github.com/tkolleh/roda.lua/compare/v1.16.5...v1.16.6) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** fix Windows path mangling in cp/mv by converting build_dir to POSIX ([dfd7953](https://github.com/tkolleh/roda.lua/commit/dfd7953cec59357d374a90df86c63deaa7ef390f))
+
 ## [1.16.5](https://github.com/tkolleh/roda.lua/compare/v1.16.4...v1.16.5) (2026-04-19)
 
 
