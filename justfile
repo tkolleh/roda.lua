@@ -152,7 +152,7 @@ prep:
 build-luv: prep
     @echo "Building static luv and shared module..."
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
-    cd {{ build_dir / 'luv' }} && cmake -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
+    cd {{ build_dir / 'luv' }} && cmake -DCMAKE_C_FLAGS="-Wno-error=incompatible-pointer-types" -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
     cd {{ build_dir / 'luv' }} && make
     cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
     cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
@@ -164,7 +164,7 @@ build-luv: prep
 build-system: prep
     @echo "Building static luasystem..."
     {{ if path_exists(build_dir / "luasystem") == "true" { "" } else { "git clone https://github.com/o-lim/luasystem.git " + (build_dir / "luasystem") } }}
-    cd {{ build_dir / 'luasystem' }} && {{ cc }} -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
+    cd {{ build_dir / 'luasystem' }} && {{ cc }} -Wno-error=incompatible-pointer-types -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
     cd {{ build_dir / 'luasystem' }} && ar rcs libsystem.a core.o compat.o time.o
     cp {{ build_dir / 'luasystem' / 'libsystem.a' }} {{ build_dir }}/
 
