@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/tkolleh/roda.lua/compare/v1.14.0...v1.15.0) (2026-04-19)
+
+
+### Features
+
+* Add code coverage ([#50](https://github.com/tkolleh/roda.lua/issues/50)) ([e9a1981](https://github.com/tkolleh/roda.lua/commit/e9a19819652d92c7312e912c4cb0780ccff4faf2))
+
 ## [1.14.0](https://github.com/tkolleh/roda.lua/compare/v1.13.10...v1.14.0) (2026-04-09)
 
 
