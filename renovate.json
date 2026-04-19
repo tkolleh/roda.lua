@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "pinDigests": true
+    },
+    {
+      "description": "Exclude non-dependency fields that match the regex",
+      "matchPackageNames": ["version", "package", "lua", "license"],
+      "enabled": false
+    },
+    {
+      "description": "Map busted to its GitHub repo",
+      "matchDatasources": ["github-tags"],
+      "matchPackageNames": ["busted"],
+      "packageNameTemplate": "lunarmodules/busted"
+    },
+    {
+      "description": "Map luacov to its GitHub repo",
+      "matchDatasources": ["github-tags"],
+      "matchPackageNames": ["luacov"],
+      "packageNameTemplate": "keplerproject/luacov"
+    },
+    {
+      "description": "Map luastatic to its GitHub repo",
+      "matchDatasources": ["github-tags"],
+      "matchPackageNames": ["luastatic"],
+      "packageNameTemplate": "leafo/luastatic"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update dependencies in lux.toml",
+      "managerFilePatterns": ["/(^|/)lux\\.toml$/"],
+      "matchStrings": [
+        "^(?<depName>[\\w][\\w.-]*)\\s*=\\s*\"(?<currentValue>(?:[><=~]+\\s*)?[\\d][\\d.]*(?:-[\\d]+)?[^\"]*)\""
+      ],
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "semver-coerced"
+    }
+  ]
+}
