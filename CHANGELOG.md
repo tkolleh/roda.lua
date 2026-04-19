@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.0](https://github.com/tkolleh/roda.lua/compare/v1.15.0...v1.16.0) (2026-04-19)
+
+
+### Features
+
+* **ci:** Security hardening - SLSA Level 3 compliance and Renovate migration ([#53](https://github.com/tkolleh/roda.lua/issues/53)) ([580274e](https://github.com/tkolleh/roda.lua/commit/580274e71fcf7a03b753741f366382da54a753d9))
+
 ## [1.15.0](https://github.com/tkolleh/roda.lua/compare/v1.14.0...v1.15.0) (2026-04-19)
 
 
