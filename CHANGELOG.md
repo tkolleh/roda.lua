@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.4](https://github.com/tkolleh/roda.lua/compare/v1.16.3...v1.16.4) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** use cmake --build . instead of make for luv ([#61](https://github.com/tkolleh/roda.lua/issues/61)) ([8431c0b](https://github.com/tkolleh/roda.lua/commit/8431c0b3730d241ec1ea0fac16061f64ae28b971))
+
 ## [1.16.3](https://github.com/tkolleh/roda.lua/compare/v1.16.2...v1.16.3) (2026-04-19)
 
 
