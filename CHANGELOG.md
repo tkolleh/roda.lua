@@ -1,5 +1,105 @@
 # Changelog
 
+## [1.14.0](https://github.com/tkolleh/roda.lua/compare/v1.13.10...v1.14.0) (2026-04-09)
+
+
+### Features
+
+* add Homebrew formula support and expand CI platform matrix ([010db21](https://github.com/tkolleh/roda.lua/commit/010db21af30cb779dfc33339467e4c5a98cf8039))
+
+## [1.13.10](https://github.com/tkolleh/roda.lua/compare/v1.13.9...v1.13.10) (2026-04-09)
+
+
+### Bug Fixes
+
+* **ci:** remove invalid luarocks package from msys2 install list ([#43](https://github.com/tkolleh/roda.lua/issues/43)) ([c5b0335](https://github.com/tkolleh/roda.lua/commit/c5b0335f41283c97b66cd8dd9ba3f18181a35b7f))
+
+## [1.13.9](https://github.com/tkolleh/roda.lua/compare/v1.13.8...v1.13.9) (2026-04-09)
+
+
+### Bug Fixes
+
+* trigger release to build cross-platform binaries ([#41](https://github.com/tkolleh/roda.lua/issues/41)) ([4da7ac5](https://github.com/tkolleh/roda.lua/commit/4da7ac5289152a44fe89a637468f4dbb639e91cf))
+
+## [1.13.8](https://github.com/tkolleh/roda.lua/compare/v1.13.7...v1.13.8) (2026-04-09)
+
+
+### Bug Fixes
+
+* **ci:** consolidate LuaRocks publication to tag-triggered workflow ([#37](https://github.com/tkolleh/roda.lua/issues/37)) ([843baec](https://github.com/tkolleh/roda.lua/commit/843baec18968cf03ad49d19ba6bc0003c11ae087))
+
+## [1.13.7](https://github.com/tkolleh/roda.lua/compare/v1.13.6...v1.13.7) (2026-04-09)
+
+
+### Bug Fixes
+
+* **build:** Add missing CLI entry point and upgrade Lux to v0.28.0 ([#35](https://github.com/tkolleh/roda.lua/issues/35)) ([259d3db](https://github.com/tkolleh/roda.lua/commit/259d3dbedff87bdd6db5bce1055c45293b7e354b))
+
+## [1.13.6](https://github.com/tkolleh/roda.lua/compare/v1.13.5...v1.13.6) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** export local lux build dependencies to PATH natively ([abc8a7d](https://github.com/tkolleh/roda.lua/commit/abc8a7da34e5a2aaa23f747b6ef3882a1daa1ca1))
+
+## [1.13.5](https://github.com/tkolleh/roda.lua/compare/v1.13.4...v1.13.5) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** use lx exec to resolve luastatic build dependency ([a03d119](https://github.com/tkolleh/roda.lua/commit/a03d1194e8e35b8e5717fb6c5939ef764945daba))
+
+## [1.13.4](https://github.com/tkolleh/roda.lua/compare/v1.13.3...v1.13.4) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** use $GITHUB_PATH for lux bin in release workflow ([#29](https://github.com/tkolleh/roda.lua/issues/29)) ([54fe971](https://github.com/tkolleh/roda.lua/commit/54fe971ab2ad191fedf9cd6e7415fb977ea0009b))
+
+## [1.13.3](https://github.com/tkolleh/roda.lua/compare/v1.13.2...v1.13.3) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** use $HOME in run step for PATH in release workflow ([#27](https://github.com/tkolleh/roda.lua/issues/27)) ([a1bb2fb](https://github.com/tkolleh/roda.lua/commit/a1bb2fb90821df787a98b604fae76f96d7045b1a))
+
+## [1.13.2](https://github.com/tkolleh/roda.lua/compare/v1.13.1...v1.13.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **ci:** add Lux bin directory to PATH for luastatic in release workflow ([#25](https://github.com/tkolleh/roda.lua/issues/25)) ([19e5d5a](https://github.com/tkolleh/roda.lua/commit/19e5d5abb57a547590febd31d99a537b935b30ab))
+
+## [1.13.1](https://github.com/tkolleh/roda.lua/compare/v1.13.0...v1.13.1) (2026-04-05)
+
+
+### Bug Fixes
+
+* **build:** build luv.so shared module alongside libluv.a for tests ([fe217e3](https://github.com/tkolleh/roda.lua/commit/fe217e355f97ad0f26b1bbe7bdbd881544b6bda1))
+* **build:** remove luv/luasystem from lux dependencies to fix CI build ([d53b78a](https://github.com/tkolleh/roda.lua/commit/d53b78aa1b3280d9425a6c81074d1aee8be2deda))
+
+## [1.13.0](https://github.com/tkolleh/roda.lua/compare/v1.12.1...v1.13.0) (2026-04-05)
+
+
+### Features
+
+* **17:** enhance release workflow to build and publish artifacts ([c1ac576](https://github.com/tkolleh/roda.lua/commit/c1ac5762361c5d45cbc3ba37272395fc3ac42fe8))
+
+
+### Bug Fixes
+
+* **#16:** correct path in demo record recipe ([5355de4](https://github.com/tkolleh/roda.lua/commit/5355de4018e7f8d6798a05ede1ffb2093099ecb1))
+* **#16:** use bash instead of zsh for shell portability ([58fa6fc](https://github.com/tkolleh/roda.lua/commit/58fa6fcf3df5e7406a70da8b7c3ea9030be1d2f2))
+* Correct demo gif ([091a76a](https://github.com/tkolleh/roda.lua/commit/091a76a12424cdd2e1c86224d82a2bb052e161f3))
+
+## [1.12.2](https://github.com/tkolleh/roda.lua/compare/v1.12.1...v1.12.2) (2026-04-05)
+
+
+### Bug Fixes
+
+* **#16:** correct path in demo record recipe ([5355de4](https://github.com/tkolleh/roda.lua/commit/5355de4018e7f8d6798a05ede1ffb2093099ecb1))
+* **#16:** use bash instead of zsh for shell portability ([58fa6fc](https://github.com/tkolleh/roda.lua/commit/58fa6fcf3df5e7406a70da8b7c3ea9030be1d2f2))
+
 ## [1.12.1](https://github.com/tkolleh/roda.lua/compare/v1.1.0...v1.12.1) (2026-04-04)
 
 

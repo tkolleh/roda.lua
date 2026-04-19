@@ -17,19 +17,14 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          # Pinned to v0.18.8 due to busted/penlight transitive dependency issues
-          # in newer versions (see lumen-oss/lux#722)
-          # The publish workflow uses v0.25.3 which doesn't have this issue
-          # because it doesn't run tests (no busted dependency)
-          version: 0.18.8
+          version: 0.28.0
 
-      - name: Install just
+      - name: Install system dependencies
         run: |
-          mkdir -p /tmp/just
-          curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-unknown-linux-musl.tar.gz -o /tmp/just/just.tar.gz
-          tar -xzf /tmp/just/just.tar.gz -C /tmp/just
-          sudo mv /tmp/just/just /usr/local/bin/
-          rm -rf /tmp/just
+          sudo apt-get update
+          sudo apt-get install -y lua5.4 liblua5.4-dev cmake
+
+      - uses: extractions/setup-just@v2
 
       - name: Run tests
         run: just test-ci
@@ -44,16 +39,13 @@ jobs:
       - name: Install Lux
         uses: lumen-oss/gh-actions-lux@v1
         with:
-          # See comment in test job above for version pinning rationale
-          version: 0.18.8
+          version: 0.28.0
 
-      - name: Install just
+      - uses: extractions/setup-just@v2
+
+      - name: Install GitHub CLI (if missing)
         run: |
-          mkdir -p /tmp/just
-          curl -L https://github.com/casey/just/releases/download/1.48.1/just-1.48.1-x86_64-unknown-linux-musl.tar.gz -o /tmp/just/just.tar.gz
-          tar -xzf /tmp/just/just.tar.gz -C /tmp/just
-          sudo mv /tmp/just/just /usr/local/bin/
-          rm -rf /tmp/just
+          which gh || sudo apt-get install -y gh
 
       - name: Check formatting
         run: |
@@ -62,3 +54,10 @@ jobs:
 
       - name: Run linter
         run: just lint-ci
+
+      - name: Comment on PR if formatting needed
+        if: ${{ !env.ACT && failure() && github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment --edit-last --body $'## ⚠️ Formatting Required\n\nYour pull request contains Lua code that is not formatted according to the project\'s style guidelines.\n\n**To fix this locally:**\n\n1. Run `lx fmt` in the repository root.\n2. Commit the changes and push again.\n\n**Pro tip:** Install [lefthook](https://github.com/evilmartians/lefthook) and run `lefthook install` to automatically format your code on each commit.\n\nOnce you\'ve formatted your code, this check will pass and you can merge your PR.'

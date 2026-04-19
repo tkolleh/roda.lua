@@ -28,6 +28,9 @@ luacov.report.out
 # Demo recording
 *.cast
 
+# act (local GitHub Actions runner)
+.secrets
+
 # Build artifacts
 .build/
 /roda

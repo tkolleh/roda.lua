@@ -12,6 +12,8 @@ set unstable := true
 
 # Enable latest Just features
 
+mod demo
+
 set dotenv-load := true
 
 # Auto-load .env files
@@ -19,8 +21,8 @@ set dotenv-load := true
 set export := true
 
 # Export variables to recipe environment
-
 # Shell configuration (bash works on macOS & Linux, Windows uses PowerShell)
+
 set shell := ["bash", "-euo", "pipefail", "-c"]
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
@@ -29,21 +31,37 @@ set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 set positional-arguments := true
 
 # Enable $@ for recipe arguments
-
 # Cross-platform support
 # --- Variables ---
-
 # Lua installation prefix (default: brew --prefix lua on macOS, /usr on other platforms)
+
 lua_prefix := env('LUA_PREFIX', if os() == "macos" { `brew --prefix lua` } else { "/usr" })
-# Lua version for development headers (default: 5.5)
-lua_version := "5.5"
+
+# Lua version for development headers (default: 5.5 on macOS, 5.4 on Linux)
+
+lua_version := env('LUA_VERSION', if os() == "macos" { "5.5" } else { "5.4" })
+
+# Add lux build dependencies to PATH so luastatic can be found automatically
+
+export PATH := absolute_path(".lux/" + lua_version + "/build_dependencies/" + lua_version + "/bin") + ":" + env_var('PATH')
+
 # Include path for Lua development headers (override with LUA_INCLUDE env var)
+
 lua_include := env('LUA_INCLUDE', lua_prefix / ("include/lua" + lua_version))
-# Static Lua library (adjust path if using shared library)
-lua_lib := lua_prefix / "lib/liblua.a"
+
+# Static Lua library (default: unversioned name; override with LUA_LIB env var)
+
+lua_lib_unversioned := lua_prefix / "lib/liblua.a"
+lua_lib := env('LUA_LIB', lua_lib_unversioned)
 macos_version := if os() == "macos" { `sw_vers -productVersion | cut -d. -f1-2` } else { "" }
 build_dir := absolute_path(clean(env('BUILD_DIR', '.build')))
 package_name := "roda"
+
+# Cross-compilation support (set CMAKE_OSX_ARCHITECTURES and CC env vars for cross builds)
+
+cmake_osx_arch := env('CMAKE_OSX_ARCHITECTURES', '')
+cmake_osx_arch_flag := if cmake_osx_arch != "" { "-DCMAKE_OSX_ARCHITECTURES=" + cmake_osx_arch } else { "" }
+cc := env('CC', 'gcc')
 
 # --- Default ---
 
@@ -66,17 +84,17 @@ check-env:
 [doc("Format Lua files")]
 [group('dev')]
 fmt:
-    lx --lua-version 5.5 fmt
+    lx --lua-version {{ lua_version }} fmt
 
 [doc("Lint Lua files")]
 [group('dev')]
 lint:
-    lx --lua-version 5.5 check
+    lx --lua-version {{ lua_version }} check
 
 [doc("Lint for CI (Lua 5.4)")]
 [group('ci')]
 lint-ci:
-    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" lint
+    lx --lua-version 5.4 lint
 
 [doc("Run code quality checks")]
 [group('dev')]
@@ -86,9 +104,9 @@ check: lint fmt
 
 [doc("Run unit tests (all spec/*_spec.lua files via lux/busted)")]
 [group('test')]
-test-unit:
+test-unit: build-luv
     @echo "Running unit tests..."
-    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test
+    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} test
 
 [doc("Alias for test-unit")]
 [group('test')]
@@ -107,9 +125,9 @@ test-coverage:
 
 [doc("Run unit tests for CI (Lua 5.4)")]
 [group('ci')]
-test-ci:
+test-ci: build-luv
     @echo "Running unit tests for CI..."
-    lx --lua-version 5.4 --variables "WITH_SHARED_LIBUV=OFF" test
+    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version 5.4 test
 
 # --- Build ---
 
@@ -117,9 +135,7 @@ test-ci:
 [private]
 ensure-deps:
     @echo "Ensuring dependencies are installed..."
-    CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
-    {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} build --only-deps --no-lock
 
 [doc("Build the standalone executable")]
 [group('build')]
@@ -135,12 +151,13 @@ prep:
 [group('build')]
 [private]
 build-luv: prep
-    @echo "Building static luv..."
+    @echo "Building static luv and shared module..."
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
-    cd {{ build_dir / 'luv' }} && cmake -DBUILD_STATIC_LIBS=ON -DBUILD_MODULE=OFF -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} .
+    cd {{ build_dir / 'luv' }} && cmake -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
     cd {{ build_dir / 'luv' }} && make
     cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
     cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
+    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/
 
 [doc("Statically compile luasystem (GCC/AR)")]
 [group('build')]
@@ -148,7 +165,7 @@ build-luv: prep
 build-system: prep
     @echo "Building static luasystem..."
     {{ if path_exists(build_dir / "luasystem") == "true" { "" } else { "git clone https://github.com/o-lim/luasystem.git " + (build_dir / "luasystem") } }}
-    cd {{ build_dir / 'luasystem' }} && gcc -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
+    cd {{ build_dir / 'luasystem' }} && {{ cc }} -c src/core.c src/compat.c src/time.c -I{{ lua_include }}
     cd {{ build_dir / 'luasystem' }} && ar rcs libsystem.a core.o compat.o time.o
     cp {{ build_dir / 'luasystem' / 'libsystem.a' }} {{ build_dir }}/
 
@@ -156,12 +173,13 @@ build-system: prep
 [group('build')]
 [private]
 compile:
+    @echo {{ assert(path_exists("bin/spin.lua") == "true", "bin/spin.lua not found - CLI entry point missing") }}
     @echo "Compiling standalone binary..."
-    cd lua && luastatic ../bin/spin.lua \
+    cd lua && lx --lua-version {{ lua_version }} exec -- luastatic ../bin/spin.lua \
       roda/init.lua roda/spinners.lua roda/ansi.lua roda/symbols.lua roda/util.lua roda/argp.lua \
-      ../{{ build_dir / 'libluv.a' }} ../{{ build_dir / 'libuv.a' }} ../{{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
+      {{ build_dir / 'libluv.a' }} {{ build_dir / 'libuv.a' }} {{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
       -I{{ lua_include }} && \
-    mv spin.luastatic.c ../{{ build_dir }}/ && \
+    mv spin.luastatic.c {{ build_dir }}/ && \
     cd .. && \
     mv lua/spin roda
 
@@ -216,9 +234,7 @@ test-perf: build
 [doc("Install dependencies")]
 [group('workflow')]
 install:
-    CFLAGS="-I{{ lua_include }} {{ if os() == 'macos' { '-mmacosx-version-min=' + macos_version } else { '' } }}" \
-    {{ if os() == 'macos' { 'MACOSX_DEPLOYMENT_TARGET=' + macos_version } else { '' } }} \
-    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} build --only-deps --no-lock
 
 [doc("Run spinner directly without building (development mode)")]
 [group('dev')]
@@ -241,17 +257,34 @@ release: all
     @echo "Preparing release..."
     @echo "Release artifacts ready."
 
-[doc("Publish to LuaRocks via lux")]
 [confirm("Publish to LuaRocks? This action cannot be undone.")]
+[doc("Publish to LuaRocks via lux")]
 [group('release')]
 publish: release
     @echo "Publishing to LuaRocks..."
-    lx --lua-version 5.5 publish
+    lx --lua-version {{ lua_version }} publish
+
+# --- Local CI (act) ---
+
+[doc("Run test job locally via act (requires: docker, gh auth login)")]
+[group('ci')]
+act-test:
+    act push --job test -W .github/workflows/tests.yml -s GITHUB_TOKEN="$(gh auth token)"
+
+[doc("Run lint job locally via act")]
+[group('ci')]
+act-lint:
+    act push --job lint -W .github/workflows/tests.yml -s GITHUB_TOKEN="$(gh auth token)"
+
+[doc("Run publish validation locally via act (upload step skipped)")]
+[group('ci')]
+act-publish:
+    act workflow_dispatch -W .github/workflows/publish.yml -s GITHUB_TOKEN="$(gh auth token)"
 
 # --- Maintenance ---
 
-[doc("Clean build artifacts")]
 [confirm("Remove all build artifacts and binaries?")]
+[doc("Clean build artifacts")]
 [group('maintenance')]
 clean:
     rm -rf {{ build_dir }}
@@ -261,4 +294,4 @@ clean:
 [doc("Update lux dependencies")]
 [group('maintenance')]
 update:
-    lx --lua-version 5.5 update
+    lx --lua-version {{ lua_version }} update
