@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.2](https://github.com/tkolleh/roda.lua/compare/v1.16.1...v1.16.2) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** use correct path separator in justfile for Windows ([#57](https://github.com/tkolleh/roda.lua/issues/57)) ([036d66e](https://github.com/tkolleh/roda.lua/commit/036d66e452d0c3d0fdd9bec499083057b4b43671))
+
 ## [1.16.1](https://github.com/tkolleh/roda.lua/compare/v1.16.0...v1.16.1) (2026-04-19)
 
 
