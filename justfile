@@ -55,6 +55,12 @@ lua_lib_unversioned := lua_prefix / "lib/liblua.a"
 lua_lib := env('LUA_LIB', lua_lib_unversioned)
 macos_version := if os() == "macos" { `sw_vers -productVersion | cut -d. -f1-2` } else { "" }
 build_dir := absolute_path(clean(env('BUILD_DIR', '.build')))
+
+# MSYS2's cp/mv strip backslashes from Windows-style paths (D:\a\... → D:a...).
+# Convert build_dir to a POSIX path for shell copy/move commands on Windows only.
+# cd, cmake, git, and gcc all handle mixed paths correctly (log-confirmed).
+build_dir_shell := if os() == "windows" { `cygpath -u '` + build_dir + `'` } else { build_dir }
+
 package_name := "roda"
 
 # Cross-compilation support (set CMAKE_OSX_ARCHITECTURES and CC env vars for cross builds)
@@ -154,9 +160,9 @@ build-luv: prep
     {{ if path_exists(build_dir / "luv") == "true" { "" } else { "git clone --recursive https://github.com/luvit/luv.git " + (build_dir / "luv") } }}
     cd {{ build_dir / 'luv' }} && cmake -DCMAKE_C_FLAGS="-Wno-error=incompatible-pointer-types" -DBUILD_MODULE=ON -DBUILD_STATIC_LIBS=ON -DWITH_LUA_ENGINE=Lua -DLUA_BUILD_TYPE=System -DLUA_INCLUDE_DIR={{ lua_include }} -DLUA_LIBRARIES={{ lua_lib }} {{ cmake_osx_arch_flag }} .
     cd {{ build_dir / 'luv' }} && cmake --build .
-    cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
-    cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
-    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/ 2>/dev/null || cp {{ build_dir / 'luv' / 'luv.dll' }} {{ build_dir }}/ 2>/dev/null || true
+    cp {{ build_dir_shell / 'luv' / 'libluv.a' }} {{ build_dir_shell }}/
+    cp {{ build_dir_shell / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir_shell }}/
+    cp {{ build_dir_shell / 'luv' / 'luv.so' }} {{ build_dir_shell }}/ 2>/dev/null || cp {{ build_dir_shell / 'luv' / 'luv.dll' }} {{ build_dir_shell }}/ 2>/dev/null || true
 
 [doc("Statically compile luasystem (GCC/AR)")]
 [group('build')]
@@ -170,7 +176,7 @@ build-system: prep
       -c src/core.c src/compat.c src/time.c \
       -I{{ lua_include }}
     cd {{ build_dir / 'luasystem' }} && ar rcs libsystem.a core.o compat.o time.o
-    cp {{ build_dir / 'luasystem' / 'libsystem.a' }} {{ build_dir }}/
+    cp {{ build_dir_shell / 'luasystem' / 'libsystem.a' }} {{ build_dir_shell }}/
 
 [doc("Compile the final binary using luastatic")]
 [group('build')]
@@ -183,7 +189,7 @@ compile:
       {{ build_dir / 'libluv.a' }} {{ build_dir / 'libuv.a' }} {{ build_dir / 'libsystem.a' }} {{ lua_lib }} \
       {{ if os() == "windows" { "-lwinmm -lws2_32" } else { "" } }} \
       -I{{ lua_include }} && \
-    mv spin.luastatic.c {{ build_dir }}/ && \
+    mv spin.luastatic.c {{ build_dir_shell }}/ && \
     cd .. && \
     mv lua/{{ if os() == "windows" { "spin.exe" } else { "spin" } }} {{ if os() == "windows" { "roda.exe" } else { "roda" } }}
 
