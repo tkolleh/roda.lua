@@ -134,7 +134,7 @@ test-ci: build-luv
 [private]
 ensure-deps:
     @echo "Ensuring dependencies are installed..."
-    lx --lua-version {{ lua_version }} build --only-deps --no-lock
+    lx --lua-version {{ lua_version }} --lua-dir {{ lua_prefix }} build --only-deps --no-lock
 
 [doc("Build the standalone executable")]
 [group('build')]

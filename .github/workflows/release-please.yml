@@ -82,6 +82,11 @@ jobs:
             mingw-w64-ucrt-x86_64-lua
             mingw-w64-ucrt-x86_64-lua-luarocks
 
+      - name: Add UCRT64 to PATH (Windows)
+        if: matrix.target == 'windows'
+        shell: bash
+        run: echo "C:\msys64\ucrt64\bin" >> $GITHUB_PATH
+
       - name: Install System Dependencies (Linux)
         if: matrix.target == 'linux'
         run: |
