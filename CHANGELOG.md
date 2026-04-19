@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.8](https://github.com/tkolleh/roda.lua/compare/v1.16.7...v1.16.8) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** replace Windows build recipes with dedicated bash script ([d3eb915](https://github.com/tkolleh/roda.lua/commit/d3eb915c48d865067783100184b9cfcc7459ec73))
+
 ## [1.16.7](https://github.com/tkolleh/roda.lua/compare/v1.16.6...v1.16.7) (2026-04-19)
 
 
