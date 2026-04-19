@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/tkolleh/roda.lua/compare/v1.16.0...v1.16.1) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** add UCRT64 to GITHUB_PATH for Windows build ([#55](https://github.com/tkolleh/roda.lua/issues/55)) ([59ef9d6](https://github.com/tkolleh/roda.lua/commit/59ef9d6d5e706102af95661efd8ab2cfb031a4a1))
+
 ## [1.16.0](https://github.com/tkolleh/roda.lua/compare/v1.15.0...v1.16.0) (2026-04-19)
 
 
