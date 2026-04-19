@@ -94,6 +94,17 @@ test-unit:
 [group('test')]
 test: test-unit
 
+luacov_src := `find .lux/5.5/test_dependencies/5.5 -maxdepth 1 -name '*luacov*' -type d -print -quit 2>/dev/null` / "src"
+
+[doc("Run unit tests with coverage and generate report")]
+[group('test')]
+test-coverage:
+    @echo "Running unit tests with coverage..."
+    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test -- --coverage
+    @echo "Generating coverage report..."
+    lx exec --no-loader lua -- -e "package.path = package.path .. ';{{ luacov_src }}/?.lua'; local r = require('luacov.runner'); r.run_report(r.load_config())"
+    @echo "Coverage report written to luacov.report.out"
+
 [doc("Run unit tests for CI (Lua 5.4)")]
 [group('ci')]
 test-ci:
