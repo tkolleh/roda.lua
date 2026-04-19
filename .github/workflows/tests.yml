@@ -23,6 +23,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y lua5.4 liblua5.4-dev cmake
+          sudo ln -sf /usr/bin/lua5.4 /usr/bin/lua
 
       - uses: extractions/setup-just@v2
 
@@ -43,9 +44,12 @@ jobs:
 
       - uses: extractions/setup-just@v2
 
-      - name: Install GitHub CLI (if missing)
+      - name: Install GitHub CLI and Lua (if missing)
         run: |
           which gh || sudo apt-get install -y gh
+          sudo apt-get update
+          sudo apt-get install -y lua5.4 liblua5.4-dev
+          sudo ln -sf /usr/bin/lua5.4 /usr/bin/lua
 
       - name: Check formatting
         run: |

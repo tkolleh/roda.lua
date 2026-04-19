@@ -15,16 +15,24 @@ function M.bracket(acquire, release)
 	return function(use)
 		return function(on_complete)
 			local resource = acquire()
-			use(
-				resource,
-				-- Release the resource and trigger the final continuation
-				function(...)
-					release(resource)
-					if on_complete then
-						on_complete(...)
-					end
+			local released = false
+
+			local function safe_release(...)
+				if released then
+					return
 				end
-			)
+				released = true
+				release(resource)
+				if on_complete then
+					on_complete(...)
+				end
+			end
+
+			local success, err = pcall(use, resource, safe_release)
+			if not success then
+				safe_release()
+				error(err, 0)
+			end
 		end
 	end
 end

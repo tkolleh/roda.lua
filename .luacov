@@ -1,0 +1,9 @@
+return {
+  include = {
+    "lua/roda/.*"
+  },
+  exclude = {
+    "spec/.*",
+    "%.lux/.*"
+  }
+}

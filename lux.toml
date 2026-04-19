@@ -24,6 +24,7 @@ dev = "git+https://github.com/tkolleh/roda.lua.git"
 
 [test_dependencies]
 busted = "2.3.0-1"
+luacov = ">= 0.15.0"
 
 [test]
 type = "busted"

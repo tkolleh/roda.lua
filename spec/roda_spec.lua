@@ -1,18 +1,17 @@
 ---@diagnostic disable: undefined-global
 local roda = require("roda")
 
-describe("roda module", function()
-	-- Mock stream to capture output without affecting terminal
-	local function mock_stream()
-		return {
-			output = {},
-			write = function(self, str)
-				table.insert(self.output, str)
-			end,
-			flush = function() end,
-		}
-	end
+local function mock_stream()
+	return {
+		output = {},
+		write = function(self, str)
+			table.insert(self.output, str)
+		end,
+		flush = function() end,
+	}
+end
 
+describe("roda module", function()
 	describe("constructor", function()
 		it("should create spinner with string text", function()
 			local spinner = roda("Loading...")
@@ -364,6 +363,57 @@ describe("roda.promise", function()
 
 		assert.is_nil(result)
 		assert.is_truthy(err)
+	end)
+end)
+
+describe("roda.roda alias", function()
+	it("should create a spinner when called directly", function()
+		local spinner = roda.roda("Direct call")
+		assert.is_not_nil(spinner)
+		assert.equals("Direct call", spinner:getText())
+	end)
+
+	it("should behave identically to roda.new", function()
+		local s1 = roda.roda({ text = "test", color = "green" })
+		local s2 = roda.new({ text = "test", color = "green" })
+		assert.equals(s1:getText(), s2:getText())
+		assert.equals(s1:getColor(), s2:getColor())
+	end)
+end)
+
+describe("render edge cases", function()
+	it("should return self when render called while not spinning", function()
+		local stream = mock_stream()
+		local spinner = roda("Test")
+		spinner._stream = stream
+		local result = spinner:render()
+		assert.equals(spinner, result)
+		assert.equals(0, #stream.output)
+	end)
+
+	it("should wrap frame index after reaching the end", function()
+		local stream = mock_stream()
+		local spinner = roda({ spinner = "line" })
+		spinner._stream = stream
+		spinner:start()
+		local frames_count = #spinner._spinner.frames
+		for _ = 1, frames_count - 1 do
+			spinner:render()
+		end
+		assert.equals(1, spinner._frame_index)
+		spinner:stop()
+	end)
+
+	it("should render when setText is called while spinning", function()
+		local stream = mock_stream()
+		local spinner = roda("Original")
+		spinner._stream = stream
+		spinner:start()
+		local count_before = #stream.output
+		spinner:setText("Updated")
+		assert.is_true(#stream.output > count_before)
+		assert.equals("Updated", spinner:getText())
+		spinner:stop()
 	end)
 end)
 
