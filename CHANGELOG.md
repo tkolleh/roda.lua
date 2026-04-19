@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.7](https://github.com/tkolleh/roda.lua/compare/v1.16.6...v1.16.7) (2026-04-19)
+
+
+### Bug Fixes
+
+* **ci:** convert build_dir to POSIX at shell runtime, not just parse time ([b610277](https://github.com/tkolleh/roda.lua/commit/b610277be7f3be5270f498c2fc660d0aac2e88da))
+
 ## [1.16.6](https://github.com/tkolleh/roda.lua/compare/v1.16.5...v1.16.6) (2026-04-19)
 
 
