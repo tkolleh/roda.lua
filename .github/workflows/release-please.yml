@@ -4,6 +4,14 @@ name: Release Please
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'assets/**'
+      - 'demo/**'
+      - 'spec/**'
+      - '.gitignore'
+      - '.luacheckrc'
+      - 'lefthook.yml'
   workflow_dispatch:
 
 permissions:
