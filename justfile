@@ -94,7 +94,7 @@ lint:
 [doc("Lint for CI (Lua 5.4)")]
 [group('ci')]
 lint-ci:
-    lx --lua-version 5.4 lint
+    lx --lua-version 5.4 --lua-dir {{ lua_prefix }} lint
 
 [doc("Run code quality checks")]
 [group('dev')]
@@ -116,9 +116,9 @@ luacov_src := `find .lux/5.5/test_dependencies/5.5 -maxdepth 1 -name '*luacov*' 
 
 [doc("Run unit tests with coverage and generate report")]
 [group('test')]
-test-coverage:
+test-coverage: build-luv
     @echo "Running unit tests with coverage..."
-    lx --lua-version 5.5 --lua-dir {{ lua_prefix }} --variables "WITH_SHARED_LIBUV=OFF" test -- --coverage
+    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version 5.5 --lua-dir {{ lua_prefix }} test -- --coverage
     @echo "Generating coverage report..."
     lx exec --no-loader lua -- -e "package.path = package.path .. ';{{ luacov_src }}/?.lua'; local r = require('luacov.runner'); r.run_report(r.load_config())"
     @echo "Coverage report written to luacov.report.out"
@@ -127,7 +127,7 @@ test-coverage:
 [group('ci')]
 test-ci: build-luv
     @echo "Running unit tests for CI..."
-    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version 5.4 test
+    LUA_CPATH="{{ build_dir }}/?.so;;" lx --lua-version 5.4 --lua-dir {{ lua_prefix }} test
 
 # --- Build ---
 
