@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Release Please
         if: ${{ !env.ACT }}
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@7987652d64b4581673a76e33ad5e98e3dd56832f # v4.1.3
         id: release
         with:
           token: ${{ secrets.PAT }}
@@ -56,16 +56,20 @@ jobs:
             name: windows-x86_64
             target: windows
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     defaults:
       run:
         shell: ${{ matrix.target == 'windows' && 'msys2 {0}' || 'bash' }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup MSYS2 (Windows)
         if: matrix.target == 'windows'
-        uses: msys2/setup-msys2@v2
+        uses: msys2/setup-msys2@ddf331adaebd714795f1042345e6ca57bd66cea8 # v2.24.1
         with:
           msystem: UCRT64
           update: true
@@ -90,7 +94,7 @@ jobs:
           brew install cmake luarocks lua@5.4
 
       - name: Install Lux
-        uses: lumen-oss/gh-actions-lux@v1
+        uses: lumen-oss/gh-actions-lux@60bee431bba7e65b608b8aa309be0eb0252f5e79 # v1.0.0
         with:
           version: 0.28.0
 
@@ -100,7 +104,7 @@ jobs:
 
       - name: Install just (Unix)
         if: matrix.target != 'windows'
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2.0.0
 
       - name: Install just (Windows)
         if: matrix.target == 'windows'
@@ -195,13 +199,32 @@ jobs:
         run: |
           luarocks lint *.rockspec
 
+      # SECURITY: Generate SBOM for the current build context
+      - name: Generate SBOM
+        if: matrix.name == 'linux-x86_64'
+        uses: anchore/sbom-action@d94f46e13c6c62f59525ac9a1e147a99dc0b9bf5 # v0.17.0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: sbom-${{ matrix.name }}.json
+
+      # SECURITY: Generate unforgeable attestations binding the artifacts and SBOM to this OIDC run
+      - name: Attest Build Provenance
+        if: matrix.name == 'linux-x86_64'
+        uses: actions/attest-build-provenance@1c608d11d69870c2092266b3f9a6f3abbf17002c # v1.4.3
+        with:
+          subject-path: |
+            roda-*.*
+            *.rockspec
+            sbom-${{ matrix.name }}.json
+
       - name: Upload Release Artifacts (with rockspec)
         if: ${{ !env.ACT && matrix.name == 'linux-x86_64' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release upload ${{ needs.release-please.outputs.tag_name }} \
-            roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 *.rockspec --clobber
+            roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 *.rockspec sbom-${{ matrix.name }}.json --clobber
 
       - name: Upload Release Artifacts (Linux aarch64)
         if: ${{ !env.ACT && matrix.name == 'linux-aarch64' }}
@@ -226,3 +249,35 @@ jobs:
         run: |
           gh release upload ${{ needs.release-please.outputs.tag_name }} \
             roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber
+
+  update-release-notes:
+    name: Add Attestation Verification Instructions
+    needs: [release-please, build-release]
+    if: ${{ needs.release-please.outputs.release_created == 'true' || needs.release-please.outputs.release_created == true }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Append attestation verification instructions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ needs.release-please.outputs.tag_name }}"
+          ATTESTATION_BLOCK='
+
+          ---
+
+          ## Verifying GitHub Artifact Attestations
+
+          The artifacts in this release have attestations generated with GitHub Artifact Attestations. These can be verified by using the [GitHub CLI](https://cli.github.com/manual/gh_attestation_verify):
+
+          ```bash
+          gh attestation verify <file-path of downloaded artifact> --repo tkolleh/roda.lua
+          ```
+
+          You can also download the attestation from [GitHub](https://github.com/tkolleh/roda.lua/attestations) and verify against that directly:
+
+          ```bash
+          gh attestation verify <file-path of downloaded artifact> --bundle <file-path of downloaded attestation>
+          ```'
+          gh release edit "$TAG" --notes "$(gh release view "$TAG" --json body --jq '.body')${ATTESTATION_BLOCK}"
