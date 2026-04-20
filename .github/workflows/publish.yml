@@ -7,8 +7,52 @@ on:
       - "v*.*.*"
   workflow_dispatch:
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
+  verify-chain:
+    runs-on: ubuntu-24.04
+    if: github.event_name != 'workflow_dispatch'
+    steps:
+      - name: Check commit is on main branch
+        uses: actions/github-script@60bee431bba7e65b608b8aa309be0eb0252f5e79 # v7.0.1
+        with:
+          script: |
+            const { data: branches } = await github.rest.repos.listBranchesForHeadCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha
+            });
+            const isOnMain = branches.some(b => b.name === 'main');
+            if (!isOnMain) {
+              core.setFailed(`Commit ${context.sha} is not on main branch.`);
+              return;
+            }
+            console.log('✓ Commit is on main branch');
+
+      - name: Verify Release Please created this tag
+        uses: actions/github-script@60bee431bba7e65b608b8aa309be0eb0252f5e79 # v7.0.1
+        with:
+          script: |
+            const tag = context.ref.replace('refs/tags/', '');
+            try {
+              const { data: release } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tag
+              });
+              console.log(`✓ Tag ${tag} verified as Release Please release`);
+            } catch (error) {
+              core.setFailed(`No release found for tag ${tag}. Not a Release Please release.`);
+            }
+
   publish:
+    needs: verify-chain
+    if: |
+      always() &&
+      (needs.verify-chain.result == 'success' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     environment: luarocks-publish
     steps:
