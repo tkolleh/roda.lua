@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.9](https://github.com/tkolleh/roda.lua/compare/v1.16.8...v1.16.9) (2026-04-20)
+
+
+### Bug Fixes
+
+* **ci:** restore LUA_VERSION and add LUA_INCLUDE to macOS build steps ([5d66b2e](https://github.com/tkolleh/roda.lua/commit/5d66b2e79f7ed3ed8076899edfec37c47382d084))
+
 ## [1.16.8](https://github.com/tkolleh/roda.lua/compare/v1.16.7...v1.16.8) (2026-04-19)
 
 
