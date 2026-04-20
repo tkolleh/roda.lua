@@ -2,16 +2,10 @@
 name: Release Please
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Tests"]
+    types: [completed]
     branches: [main]
-    paths-ignore:
-      - '**/*.md'
-      - 'assets/**'
-      - 'demo/**'
-      - 'spec/**'
-      - '.gitignore'
-      - '.luacheckrc'
-      - 'lefthook.yml'
   workflow_dispatch:
 
 permissions:
@@ -22,12 +16,38 @@ jobs:
   release-please:
     name: Release Please
     runs-on: ubuntu-24.04
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
+
+      - name: Check for relevant changes
+        id: check_changes
+        if: github.event_name == 'workflow_run'
+        run: |
+          CHANGED=$(git diff --name-only HEAD^1 HEAD 2>/dev/null || git diff --name-only HEAD~1 HEAD 2>/dev/null || git log --name-only --pretty=format: HEAD | grep -v '^$' || true)
+          if [ -z "$CHANGED" ]; then
+            echo "::notice::Could not determine changed files. Proceeding with release check."
+            echo "skip_release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          RELEVANT=$(echo "$CHANGED" | grep -Ev '/$' | grep -Ev '\.(md)$|^(assets|demo|spec)/|^\.gitignore$|^\.luacheckrc$|^lefthook\.yml$' || true)
+          if [ -z "$RELEVANT" ]; then
+            echo "::notice::No relevant changes detected. Skipping release."
+            echo "skip_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Relevant changes detected: $(echo "$RELEVANT" | tr '\n' ' ')"
+            echo "skip_release=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Release Please
-        if: ${{ !env.ACT }}
+        if: ${{ !env.ACT && steps.check_changes.outputs.skip_release != 'true' }}
         uses: googleapis/release-please-action@7987652d64b4581673a76e33ad5e98e3dd56832f # v4.1.3
         id: release
         with:
