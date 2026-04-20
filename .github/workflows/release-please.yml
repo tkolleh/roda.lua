@@ -188,15 +188,11 @@ jobs:
           format: cyclonedx-json
           output-file: sbom-${{ matrix.name }}.json
 
-      # SECURITY: Generate unforgeable attestations binding the artifacts and SBOM to this OIDC run
+      # SECURITY: Generate unforgeable attestations binding each platform's artifact to this OIDC run
       - name: Attest Build Provenance
-        if: matrix.name == 'linux-x86_64'
         uses: actions/attest-build-provenance@1c608d11d69870c2092266b3f9a6f3abbf17002c # v1.4.3
         with:
-          subject-path: |
-            roda-*.*
-            *.rockspec
-            sbom-${{ matrix.name }}.json
+          subject-path: roda-${{ matrix.name }}.tar.gz
 
       - name: Upload Release Artifacts (with rockspec)
         if: ${{ !env.ACT && matrix.name == 'linux-x86_64' }}
@@ -225,7 +221,10 @@ jobs:
   update-release-notes:
     name: Add Attestation Verification Instructions
     needs: [release-please, build-release]
-    if: ${{ needs.release-please.outputs.release_created == 'true' || needs.release-please.outputs.release_created == true }}
+    if: |
+      always() &&
+      (needs.release-please.outputs.release_created == 'true' || needs.release-please.outputs.release_created == true) &&
+      needs.build-release.result == 'success'
     runs-on: ubuntu-24.04
     permissions:
       contents: read

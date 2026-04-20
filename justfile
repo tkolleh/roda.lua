@@ -286,6 +286,38 @@ act-publish:
 act-build:
     act workflow_dispatch -W .github/workflows/act-build-validate.yml -s GITHUB_TOKEN="$(gh auth token)"
 
+# --- Attestation ---
+
+repo := "tkolleh/roda.lua"
+
+[doc("Download latest release and verify artifact attestations")]
+[group('release')]
+attest: (attest-verify "linux-x86_64") (attest-verify "linux-aarch64") (attest-verify "macos-arm64") (attest-verify "macos-x86_64") (attest-verify-rockspec) (attest-verify-sbom)
+
+[doc("Download and verify attestation for a platform tarball")]
+[group('release')]
+attest-verify platform:
+    @mkdir -p /tmp/roda-attest
+    @echo "Downloading roda-{{ platform }}.tar.gz..."
+    @gh release download --repo {{ repo }} --dir /tmp/roda-attest --clobber -p "roda-{{ platform }}.tar.gz"
+    @echo "Verifying attestation for roda-{{ platform }}.tar.gz..."
+    @gh attestation verify /tmp/roda-attest/roda-{{ platform }}.tar.gz --repo {{ repo }}
+
+[doc("Download and verify attestation for the rockspec")]
+[group('release')]
+attest-verify-rockspec:
+    @mkdir -p /tmp/roda-attest
+    gh release download --repo {{ repo }} --dir /tmp/roda-attest --clobber -p "*.rockspec"
+    @cd /tmp/roda-attest && for f in *.rockspec; do test -f "$$f" || continue; echo "Verifying attestation for $$f..."; gh attestation verify "$$f" --repo {{ repo }}; done
+
+[doc("Download and verify attestation for the SBOM")]
+[group('release')]
+attest-verify-sbom:
+    @mkdir -p /tmp/roda-attest
+    @echo "Downloading SBOM..."
+    gh release download --repo {{ repo }} --dir /tmp/roda-attest --clobber -p "sbom-*.json"
+    @cd /tmp/roda-attest && for f in sbom-*.json; do test -f "$$f" || continue; echo "Verifying attestation for $$f..."; gh attestation verify "$$f" --repo {{ repo }}; done
+
 # --- Maintenance ---
 
 [confirm("Remove all build artifacts and binaries?")]
