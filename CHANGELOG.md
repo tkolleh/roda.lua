@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.1](https://github.com/tkolleh/roda.lua/compare/v1.17.0...v1.17.1) (2026-04-20)
+
+
+### Bug Fixes
+
+* **ci:** extend attestation to all platforms and add verification recipes ([1b7ae6f](https://github.com/tkolleh/roda.lua/commit/1b7ae6fa3dc65b3b486f37eb2eeebcf31aac099e))
+
 ## [1.17.0](https://github.com/tkolleh/roda.lua/compare/v1.16.9...v1.17.0) (2026-04-20)
 
 
