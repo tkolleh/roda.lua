@@ -72,9 +72,6 @@ jobs:
           - os: macos-latest
             name: macos-x86_64
             target: macos
-          - os: windows-2022
-            name: windows-x86_64
-            target: windows
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
@@ -82,25 +79,10 @@ jobs:
       attestations: write
     defaults:
       run:
-        shell: ${{ matrix.target == 'windows' && 'msys2 {0}' || 'bash' }}
+        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Setup MSYS2 (Windows)
-        if: matrix.target == 'windows'
-        uses: msys2/setup-msys2@e9898307ac31d1a803454791be09ab9973336e1c # v2.31.1
-        with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            git
-            make
-            unzip
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-cmake
-            mingw-w64-ucrt-x86_64-lua
-            mingw-w64-ucrt-x86_64-lua-luarocks
 
       - name: Install System Dependencies (Linux)
         if: matrix.target == 'linux'
@@ -118,12 +100,7 @@ jobs:
         with:
           version: 0.28.2
 
-      - name: Copy Lux to MSYS2 (Windows)
-        if: matrix.target == 'windows'
-        run: cp "/c/Program Files/lux/lx.exe" /usr/bin/lx.exe
-
-      - name: Install just (Unix)
-        if: matrix.target != 'windows'
+      - name: Install just
         uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2.0.0
 
       - name: Build Executable (Linux)
@@ -166,37 +143,18 @@ jobs:
           export MACOSX_DEPLOYMENT_TARGET="11.0"
           just build
 
-      - name: Build Executable (Windows)
-        if: matrix.target == 'windows'
-        env:
-          BUILD_DIR: ${{ github.workspace }}/.build
-          LUA_PREFIX: /ucrt64
-          LUA_LIB: /ucrt64/lib/liblua.a
-          LUA_INCLUDE: /ucrt64/include
-          LUA_VERSION: "5.4"
-        run: bash bin/build-windows.sh
-
       - name: Package Artifacts
         run: |
           mkdir -p staging
-          if [ "${{ matrix.target }}" = "windows" ]; then
-            cp roda.exe staging/
-            cp LICENSE README.md staging/ 2>/dev/null || true
-            cd staging
-            zip -r ../roda-${{ matrix.name }}.zip *
-            cd ..
-            sha256sum roda-${{ matrix.name }}.zip > roda-${{ matrix.name }}.zip.sha256
+          cp roda staging/
+          cp LICENSE README.md staging/ 2>/dev/null || true
+          cd staging
+          tar -czvf ../roda-${{ matrix.name }}.tar.gz *
+          cd ..
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum roda-${{ matrix.name }}.tar.gz > roda-${{ matrix.name }}.tar.gz.sha256
           else
-            cp roda staging/
-            cp LICENSE README.md staging/ 2>/dev/null || true
-            cd staging
-            tar -czvf ../roda-${{ matrix.name }}.tar.gz *
-            cd ..
-            if command -v sha256sum >/dev/null 2>&1; then
-              sha256sum roda-${{ matrix.name }}.tar.gz > roda-${{ matrix.name }}.tar.gz.sha256
-            else
-              shasum -a 256 roda-${{ matrix.name }}.tar.gz > roda-${{ matrix.name }}.tar.gz.sha256
-            fi
+            shasum -a 256 roda-${{ matrix.name }}.tar.gz > roda-${{ matrix.name }}.tar.gz.sha256
           fi
 
       - name: Verify Binary Architecture
@@ -255,14 +213,6 @@ jobs:
         run: |
           gh release upload ${{ needs.release-please.outputs.tag_name }} \
             roda-${{ matrix.name }}.tar.gz roda-${{ matrix.name }}.tar.gz.sha256 --clobber
-
-      - name: Upload Release Artifacts (Windows)
-        if: ${{ !env.ACT && matrix.target == 'windows' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release upload ${{ needs.release-please.outputs.tag_name }} \
-            roda-${{ matrix.name }}.zip roda-${{ matrix.name }}.zip.sha256 --clobber
 
       - name: Upload Release Artifacts (macOS)
         if: ${{ !env.ACT && matrix.target == 'macos' }}

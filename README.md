@@ -85,6 +85,10 @@ chmod +x roda
 sudo mv roda /usr/local/bin/
 ```
 
+#### Windows
+
+Windows users can build from source using [MSYS2 UCRT64](https://www.msys2.org/) with the MinGW toolchain. See the justfile and past CI workflow history for reference.
+
 ### Lua Library
 
 If you want to use Roda as a Lua library in your own scripts or applications:

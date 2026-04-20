@@ -21,7 +21,7 @@ set dotenv-load := true
 set export := true
 
 # Export variables to recipe environment
-# Shell configuration (bash works on macOS & Linux, Windows uses PowerShell)
+# Shell configuration (bash for macOS & Linux)
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
@@ -41,7 +41,7 @@ lua_prefix := env('LUA_PREFIX', if os() == "macos" { `brew --prefix lua` } else 
 lua_version := env('LUA_VERSION', if os() == "macos" { "5.5" } else { "5.4" })
 
 # Add lux build dependencies to PATH so luastatic can be found automatically
-# (Unix only — Windows build uses bin/build-windows.sh which manages its own PATH)
+# Windows users building from source: set PATH manually or run via MSYS2 UCRT64
 export PATH := absolute_path(".lux/" + lua_version + "/build_dependencies/" + lua_version + "/bin") + ":" + env_var('PATH')
 
 # Include path for Lua development headers (override with LUA_INCLUDE env var)
@@ -154,7 +154,7 @@ build-luv: prep
     cd {{ build_dir / 'luv' }} && cmake --build .
     cp {{ build_dir / 'luv' / 'libluv.a' }} {{ build_dir }}/
     cp {{ build_dir / 'luv' / 'deps' / 'libuv' / 'libuv.a' }} {{ build_dir }}/
-    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/ 2>/dev/null || cp {{ build_dir / 'luv' / 'luv.dll' }} {{ build_dir }}/ 2>/dev/null || true
+    cp {{ build_dir / 'luv' / 'luv.so' }} {{ build_dir }}/ 2>/dev/null || true
 
 [doc("Statically compile luasystem (GCC/AR)")]
 [group('build')]
