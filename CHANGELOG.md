@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.0](https://github.com/tkolleh/roda.lua/compare/v1.16.9...v1.17.0) (2026-04-20)
+
+
+### Features
+
+* **ci:** establish strict workflow dependency chain Tests → Release Please → Publish ([#68](https://github.com/tkolleh/roda.lua/issues/68)) ([d1d61b8](https://github.com/tkolleh/roda.lua/commit/d1d61b84a73397cbe3b139ccb4089883253b30e9))
+
 ## [1.16.9](https://github.com/tkolleh/roda.lua/compare/v1.16.8...v1.16.9) (2026-04-20)
 
 
