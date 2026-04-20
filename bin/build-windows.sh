@@ -106,15 +106,27 @@ gcc -O2 -fno-common \
   -DWINVER=0x0600 -D_WIN32_WINNT=0x0601 \
   -Wno-error=incompatible-pointer-types \
   -I"${LUA_INCLUDE}" \
-  -c src/core.c src/compat.c src/time.c
+  -c src/bitflags.c src/compat.c src/core.c src/environment.c \
+     src/random.c src/term.c src/time.c src/wcwidth.c \
+     src/wcwidth_ambiguous_width.c src/wcwidth_double_width.c \
+     src/wcwidth_zero_width.c
 
-ar rcs "${BUILD_DIR}/libsystem.a" core.o compat.o time.o
+ar rcs "${BUILD_DIR}/libsystem.a" \
+  bitflags.o compat.o core.o environment.o \
+  random.o term.o time.o wcwidth.o \
+  wcwidth_ambiguous_width.o wcwidth_double_width.o wcwidth_zero_width.o
 popd
 
 # ── 8. Compile standalone binary with luastatic ────────────────────────────
-# CC=gcc: MSYS2 UCRT64 has no "cc" symlink; luastatic defaults to "cc" and
-#         fails with "C compiler not found" without this explicit override.
-# -static-libgcc: prevents runtime dependency on libgcc_s_seh-1.dll
+# CC is hardcoded to "gcc -static-libgcc" here rather than inherited from the
+# environment for two reasons:
+#   1. MSYS2 UCRT64 has no "cc" symlink; luastatic defaults to
+#      os.getenv("CC") or "cc" and fails with "C compiler not found".
+#   2. -static-libgcc prevents a runtime dependency on libgcc_s_seh-1.dll.
+# The Unix justfile path uses cc := env('CC', 'gcc') to allow cross-compile
+# overrides (e.g. CC="clang -arch x86_64" for macOS x86_64). Windows does
+# not cross-compile, so hardcoding is correct and intentional here.
+#
 # Windows link flags (sourced from libuv CMakeLists.txt WIN32 section):
 #   -lws2_32   Winsock2 (libuv networking)
 #   -lpsapi    Process Status API (libuv process memory)
