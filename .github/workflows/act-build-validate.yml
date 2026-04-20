@@ -1,0 +1,43 @@
+---
+# Local-only validation workflow for act.
+# Mirrors the linux-x86_64 build step from release-please.yml exactly,
+# without the release-please needs dependency that act cannot satisfy.
+# Run with: act push -W .github/workflows/act-build-validate.yml -s GITHUB_TOKEN=...
+# This file is NOT triggered on push — it is act-only.
+name: Act Build Validate (local only)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build Linux x86_64 (act validation)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install System Dependencies (Linux)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq build-essential cmake luarocks lua5.4 liblua5.4-dev
+
+      - name: Install Lux
+        uses: lumen-oss/gh-actions-lux@bd58f7b97fe2147910580a33b677efadf746e179 # v1.0.1
+        with:
+          version: 0.28.2
+
+      - name: Install just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2.0.0
+
+      - name: Build Executable (Linux)
+        run: |
+          export LUA_PREFIX="/usr"
+          MULTIARCH=$(dpkg-architecture -qDEB_HOST_MULTIARCH)
+          export LUA_LIB="/usr/lib/${MULTIARCH}/liblua5.4.a"
+          just build
+
+      - name: Verify binary exists
+        run: |
+          test -f roda && echo "✅ roda binary produced" || (echo "❌ roda binary missing" && exit 1)
+          file roda

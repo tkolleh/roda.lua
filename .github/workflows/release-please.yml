@@ -135,6 +135,7 @@ jobs:
       - name: Build Executable (macOS x86_64)
         if: matrix.target == 'macos' && matrix.name == 'macos-x86_64'
         run: |
+          export LUA_VERSION="5.4"
           export MACOSX_DEPLOYMENT_TARGET="11.0"
 
           # Build Lua 5.4 from source for x86_64
@@ -156,8 +157,10 @@ jobs:
       - name: Build Executable (macOS arm64)
         if: matrix.target == 'macos' && matrix.name == 'macos-arm64'
         run: |
+          export LUA_VERSION="5.4"
           export LUA_PREFIX="$(brew --prefix lua@5.4)"
           export LUA_LIB="$LUA_PREFIX/lib/liblua.a"
+          export LUA_INCLUDE="$LUA_PREFIX/include/lua5.4"
           export MACOSX_DEPLOYMENT_TARGET="11.0"
           just build
 
